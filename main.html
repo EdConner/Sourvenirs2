@@ -9,15 +9,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Desert Harmony -->
-    <!-- Application Structure Plan: A single-page application with a fixed top navigation to switch between four main thematic sections: 'Souvenir Explorer', 'Spending Analysis', 'Top Stores', and 'Cultural Ranking'. This tabbed, non-linear structure was chosen over a simple linear report layout to empower users to directly access the information they are interested in, facilitating easier comparison and exploration. The explorer uses a filterable card grid, which is a highly intuitive UI pattern for browsing a large catalog of items, allowing users to progressively narrow down the data. The other sections use targeted visualizations (bar chart, sortable table) to best represent the specific data requested in the source report, maximizing clarity and user understanding. -->
-    <!-- Visualization & Content Choices: 
-        1. Product List -> Goal: Inform/Organize -> Method: Filterable Card Grid + Detail Modal. Interaction: Users can filter by country, category, price, and audience. Clicking a card opens a modal with detailed cultural stories and data. Justification: This is highly interactive and prevents information overload by showing details on demand. Library: Vanilla JS.
-        2. Tourist Spending -> Goal: Compare -> Method: Chart.js Horizontal Bar Chart. Interaction: Tooltips on hover shows precise spending percentages. Justification: A horizontal bar chart is ideal for comparing values across different countries, offering high readability. Library: Chart.js.
-        3. Famous Stores -> Goal: Inform -> Method: Searchable HTML List. Interaction: A simple text search filters the list. Justification: Provides quick access to specific information without complex controls. Library: Vanilla JS.
-        4. Product Ranking -> Goal: Compare/Organize -> Method: Sortable HTML Table. Interaction: Users can click table headers to sort products by rank, cultural value, or economic value. Justification: A table is the standard and most effective way to display and compare ranked, multi-attribute data. Library: Vanilla JS.
-    -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
             font-family: 'Vazirmatn', sans-serif;
@@ -169,6 +160,17 @@
         </div>
     </div>
 
+    <div id="store-detail-modal" class="modal fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4 hidden opacity-0">
+        <div id="store-modal-content" class="modal-content bg-white rounded-lg shadow-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto transform scale-95">
+            <div class="sticky top-0 bg-white p-4 border-b flex justify-between items-center">
+                <h3 id="store-modal-title" class="text-2xl font-bold text-[#34658F]"></h3>
+                <button id="close-store-modal" class="text-gray-500 hover:text-red-600 text-3xl">&times;</button>
+            </div>
+            <div id="store-modal-body" class="p-6">
+            </div>
+        </div>
+    </div>
+
     <script>
         const products = [
             {
@@ -182,12 +184,14 @@
                 avgPriceUSD: 35,
                 localPrice: "2500 RUB",
                 category: ["دکوری", "اسباب بازی"],
-                audience: ["بزرگسالان", "علاقه‌مندان به فرهنگ"],
+                audience: ["بزرگسالان", "علاقه‌مندان به فرهنگ", "کلکسیونرها"],
                 materials: "چوب درخت لیندن، رنگ گواش",
                 usage: "تزئین منزل، هدیه فرهنگی، کلکسیون",
                 culturalValue: 8,
                 economicValue: 7,
-                imageUrl: "Image/osint.jpg"
+                imageUrl: "https://placehold.co/400x300/E0BBE4/FFFFFF?text=Matryoshka",
+                annualProductionUnits: 150000, // میزان تولید سالانه
+                annualSalesRevenueUSD: 5250000 // درآمد فروش سالانه
             },
             {
                 id: 2,
@@ -199,8 +203,8 @@
                 description: "فرش‌های دستباف ایرانی به دلیل کیفیت، طرح‌های پیچیده و رنگ‌های طبیعی شهرت جهانی دارند. این فرش‌ها نه تنها یک کف‌پوش، بلکه یک سرمایه‌گذاری هنری محسوب می‌شوند.",
                 avgPriceUSD: 450,
                 localPrice: "25,000,000 IRR",
-                category: ["صنایع دستی", "دکوری", "لوکس"],
-                audience: ["علاقه‌مندان به هنر", "قشر پولدار", "بزرگسالان"],
+                category: ["صنایع دستی", "دکوری", "لوکس", "هنری"],
+                audience: ["علاقه‌مندان به هنر", "قشر پولدار", "بزرگسالان", "سرمایه‌گذاران"],
                 materials: "پشم، ابریشم، رنگ‌های گیاهی",
                 usage: "تزئین منزل، سرمایه‌گذاری",
                 culturalValue: 10,
@@ -210,7 +214,9 @@
                     sales: "مشکلات فروش شامل رقابت با فرش‌های ماشینی، نوسانات بازار ارز و دشواری در صادرات به دلیل تحریم‌ها.",
                     development: "فرصت‌ها شامل توسعه بازارهای آنلاین، طراحی‌های مدرن‌تر برای جذب نسل جوان و تمرکز بر پایداری و اصالت."
                 },
-                imageUrl: "https://placehold.co/400x300/957DAD/FFFFFF?text=Persian+Carpet"
+                imageUrl: "https://placehold.co/400x300/957DAD/FFFFFF?text=Persian+Carpet",
+                annualProductionUnits: 5000, // میزان تولید سالانه
+                annualSalesRevenueUSD: 2250000 // درآمد فروش سالانه
             },
             {
                 id: 3,
@@ -222,13 +228,15 @@
                 description: "ماسک‌های دست‌ساز با تزئینات پر، طلا و نقاشی‌های پیچیده. این ماسک‌ها نمادی از تاریخ غنی و فضای اسرارآمیز ونیز هستند.",
                 avgPriceUSD: 60,
                 localPrice: "55 EUR",
-                category: ["دکوری", "صنایع دستی", "پوشاک"],
-                audience: ["علاقه‌مندان به هنر", "بزرگسالان", "جوانان"],
+                category: ["دکوری", "صنایع دستی", "پوشاک", "هنری"],
+                audience: ["علاقه‌مندان به هنر", "بزرگسالان", "جوانان", "گردشگران"],
                 materials: "پاپیه ماشه، چرم، سرامیک",
                 usage: "دکور دیوار، هدیه، استفاده در مهمانی‌های بالماسکه",
                 culturalValue: 9,
                 economicValue: 7,
-                imageUrl: "https://placehold.co/400x300/D291BC/FFFFFF?text=Venetian+Mask"
+                imageUrl: "https://placehold.co/400x300/D291BC/FFFFFF?text=Venetian+Mask",
+                annualProductionUnits: 80000,
+                annualSalesRevenueUSD: 4800000
             },
             {
                 id: 4,
@@ -240,8 +248,8 @@
                 description: "یک لباس سنتی T شکل که با پارچه‌های ابریشمی زیبا و طرح‌های الهام گرفته از طبیعت ساخته می‌شود. کیمونوهای کوتاه‌تر (Yukata) به عنوان سوغاتی محبوبیت زیادی دارند.",
                 avgPriceUSD: 150,
                 localPrice: "18,000 JPY",
-                category: ["پوشاک", "لوکس"],
-                audience: ["زنان", "علاقه‌مندان به فرهنگ", "قشر متوسط"],
+                category: ["پوشاک", "لوکس", "فرهنگی"],
+                audience: ["زنان", "علاقه‌مندان به فرهنگ", "قشر متوسط", "مدگرایان"],
                 materials: "ابریشم، پنبه",
                 usage: "لباس رسمی، لباس راحتی در خانه، دکور",
                 culturalValue: 9,
@@ -251,7 +259,9 @@
                     sales: "بازار فروش کیمونوهای سنتی محدود به رویدادهای خاص و گردشگران است. قیمت بالا نیز یک چالش است.",
                     development: "فرصت‌ها شامل طراحی کیمونوهای مدرن‌تر و قابل استفاده در زندگی روزمره، و بازاریابی جهانی از طریق پلتفرم‌های آنلاین."
                 },
-                imageUrl: "https://placehold.co/400x300/FFC72C/FFFFFF?text=Kimono"
+                imageUrl: "https://placehold.co/400x300/FFC72C/FFFFFF?text=Kimono",
+                annualProductionUnits: 20000,
+                annualSalesRevenueUSD: 3000000
             },
              {
                 id: 5,
@@ -263,13 +273,15 @@
                 description: "ماکت‌های کوچک از ابوالهول که از مواد مختلفی مانند سنگ، فلز یا رزین ساخته می‌شوند و به عنوان یکی از اصلی‌ترین نمادهای مصر خریداری می‌شوند.",
                 avgPriceUSD: 15,
                 localPrice: "250 EGP",
-                category: ["دکوری", "تاریخی"],
-                audience: ["جوانان", "علاقه‌مندان به تاریخ", "کودکان"],
+                category: ["دکوری", "تاریخی", "یادگاری"],
+                audience: ["جوانان", "علاقه‌مندان به تاریخ", "کودکان", "گردشگران"],
                 materials: "سنگ بازالت، رزین، فلز",
                 usage: "دکور میز، یادگاری سفر، هدیه",
                 culturalValue: 6,
                 economicValue: 5,
-                imageUrl: "https://placehold.co/400x300/A7D2CB/FFFFFF?text=Sphinx"
+                imageUrl: "https://placehold.co/400x300/A7D2CB/FFFFFF?text=Sphinx",
+                annualProductionUnits: 200000,
+                annualSalesRevenueUSD: 3000000
             },
             {
                 id: 6,
@@ -281,13 +293,15 @@
                 description: "کلاهی با لبه پهن که معمولاً از نمد یا چرم ساخته می‌شود. این کلاه فراتر از یک پوشش سر، بخشی از هویت فرهنگی مناطق غربی و جنوبی آمریکاست.",
                 avgPriceUSD: 80,
                 localPrice: "80 USD",
-                category: ["پوشاک", "مد"],
-                audience: ["مردان", "ورزشکاران", "علاقه‌مندان به فرهنگ"],
+                category: ["پوشاک", "مد", "فرهنگی"],
+                audience: ["مردان", "ورزشکاران", "علاقه‌مندان به فرهنگ", "گردشگران"],
                 materials: "نمد، چرم",
                 usage: "پوشش روزمره، مد و فشن، یادگاری",
                 culturalValue: 7,
                 economicValue: 6,
-                imageUrl: "https://placehold.co/400x300/F8D800/FFFFFF?text=Cowboy+Hat"
+                imageUrl: "https://placehold.co/400x300/F8D800/FFFFFF?text=Cowboy+Hat",
+                annualProductionUnits: 75000,
+                annualSalesRevenueUSD: 6000000
             },
             {
                 id: 7,
@@ -299,13 +313,15 @@
                 description: "یک وسیله چوبی پرتابی که به دلیل توانایی بازگشت به پرتاب‌کننده مشهور است. بومرنگ‌های تزئینی با هنر بومیان استرالیا نقاشی می‌شوند.",
                 avgPriceUSD: 25,
                 localPrice: "35 AUD",
-                category: ["صنایع دستی", "اسباب بازی", "ورزشی"],
-                audience: ["کودکان", "ورزشکاران", "علاقه‌مندان به فرهنگ"],
+                category: ["صنایع دستی", "اسباب بازی", "ورزشی", "فرهنگی"],
+                audience: ["کودکان", "ورزشکاران", "علاقه‌مندان به فرهنگ", "گردشگران"],
                 materials: "چوب اکالیپتوس",
                 usage: "اسباب بازی، دکور، هدیه ورزشی",
                 culturalValue: 8,
                 economicValue: 6,
-                imageUrl: "https://placehold.co/400x300/FF6F61/FFFFFF?text=Boomerang"
+                imageUrl: "https://placehold.co/400x300/FF6F61/FFFFFF?text=Boomerang",
+                annualProductionUnits: 120000,
+                annualSalesRevenueUSD: 3000000
             },
              {
                 id: 8,
@@ -317,13 +333,15 @@
                 description: "کفش‌های ساخته شده از یک تکه چوب که به صورت تزئینی رنگ‌آمیزی می‌شوند. اگرچه هنوز در برخی مناطق روستایی پوشیده می‌شوند، اما بیشتر به عنوان سوغاتی محبوب هستند.",
                 avgPriceUSD: 30,
                 localPrice: "28 EUR",
-                category: ["دکوری", "پوشاک"],
-                audience: ["بزرگسالان", "علاقه‌مندان به فرهنگ"],
+                category: ["دکوری", "پوشاک", "فرهنگی"],
+                audience: ["بزرگسالان", "علاقه‌مندان به فرهنگ", "گردشگران"],
                 materials: "چوب صنوبر یا بید",
                 usage: "گلدان، دکور دیوار، یادگاری",
                 culturalValue: 7,
                 economicValue: 5,
-                imageUrl: "https://placehold.co/400x300/6B5B95/FFFFFF?text=Dutch+Clogs"
+                imageUrl: "https://placehold.co/400x300/6B5B95/FFFFFF?text=Dutch+Clogs",
+                annualProductionUnits: 90000,
+                annualSalesRevenueUSD: 2700000
             },
             {
                 id: 9,
@@ -335,13 +353,15 @@
                 description: "فانوس‌های دست‌ساز از فلز و شیشه‌های رنگی که نور را به زیبایی منعکس می‌کنند. بسیار محبوب برای تزئین منزل و ایجاد فضایی گرم و شرقی.",
                 avgPriceUSD: 45,
                 localPrice: "400 MAD",
-                category: ["دکوری", "صنایع دستی"],
-                audience: ["بزرگسالان", "علاقه‌مندان به هنر"],
+                category: ["دکوری", "صنایع دستی", "هنری"],
+                audience: ["بزرگسالان", "علاقه‌مندان به هنر", "گردشگران"],
                 materials: "آهن، مس، شیشه رنگی",
                 usage: "روشنایی، دکوراسیون، هدیه",
                 culturalValue: 8,
                 economicValue: 6,
-                imageUrl: "https://placehold.co/400x300/88B04B/FFFFFF?text=Moroccan+Lantern"
+                imageUrl: "https://placehold.co/400x300/88B04B/FFFFFF?text=Moroccan+Lantern",
+                annualProductionUnits: 60000,
+                annualSalesRevenueUSD: 2700000
             },
             {
                 id: 10,
@@ -353,13 +373,15 @@
                 description: "ظروف سفالی دست‌ساز با طرح‌های الهام گرفته از هنر یونان باستان, شامل گلدان‌ها، کاسه‌ها و مجسمه‌های کوچک.",
                 avgPriceUSD: 55,
                 localPrice: "50 EUR",
-                category: ["صنایع دستی", "دکوری", "تاریخی"],
-                audience: ["علاقه‌مندان به هنر", "علاقه‌مندان به تاریخ", "بزرگسالان"],
+                category: ["صنایع دستی", "دکوری", "تاریخی", "هنری"],
+                audience: ["علاقه‌مندان به هنر", "علاقه‌مندان به تاریخ", "بزرگسالان", "کلکسیونرها"],
                 materials: "خاک رس، رنگ‌های معدنی",
                 usage: "دکور منزل، ظروف کاربردی، کلکسیون",
                 culturalValue: 9,
                 economicValue: 7,
-                imageUrl: "https://placehold.co/400x300/F7CAC9/FFFFFF?text=Greek+Pottery"
+                imageUrl: "https://placehold.co/400x300/F7CAC9/FFFFFF?text=Greek+Pottery",
+                annualProductionUnits: 70000,
+                annualSalesRevenueUSD: 3850000
             },
             {
                 id: 11,
@@ -371,13 +393,15 @@
                 description: "مجسمه‌های چوبی دست‌ساز، اغلب با جزئیات دقیق، که صحنه‌های روستایی، حیوانات یا شخصیت‌های فولکلور را به تصویر می‌کشند.",
                 avgPriceUSD: 70,
                 localPrice: "65 EUR",
-                category: ["دکوری", "صنایع دستی"],
-                audience: ["بزرگسالان", "علاقه‌مندان به هنر", "قشر متوسط"],
+                category: ["دکوری", "صنایع دستی", "هنری"],
+                audience: ["بزرگسالان", "علاقه‌مندان به هنر", "قشر متوسط", "گردشگران"],
                 materials: "چوب لیندن، افرا",
                 usage: "دکور منزل، هدیه، کلکسیون",
                 culturalValue: 7,
                 economicValue: 6,
-                imageUrl: "https://placehold.co/400x300/F5D7E3/FFFFFF?text=German+Wood"
+                imageUrl: "https://placehold.co/400x300/F5D7E3/FFFFFF?text=German+Wood",
+                annualProductionUnits: 40000,
+                annualSalesRevenueUSD: 2800000
             },
             {
                 id: 12,
@@ -389,13 +413,15 @@
                 description: "ماکت‌های کوچک از مجسمه‌های سنگی موآی که نماد جزیره ایستر و فرهنگ پولینزی هستند.",
                 avgPriceUSD: 20,
                 localPrice: "18,000 CLP",
-                category: ["دکوری", "تاریخی"],
-                audience: ["جوانان", "علاقه‌مندان به تاریخ", "کودکان"],
+                category: ["دکوری", "تاریخی", "یادگاری"],
+                audience: ["جوانان", "علاقه‌مندان به تاریخ", "کودکان", "گردشگران"],
                 materials: "رزین، سنگ",
                 usage: "دکور میز، یادگاری سفر، هدیه",
                 culturalValue: 7,
                 economicValue: 5,
-                imageUrl: "https://placehold.co/400x300/C1E1C1/FFFFFF?text=Moai+Figurine"
+                imageUrl: "https://placehold.co/400x300/C1E1C1/FFFFFF?text=Moai+Figurine",
+                annualProductionUnits: 100000,
+                annualSalesRevenueUSD: 2000000
             },
             {
                 id: 13,
@@ -407,13 +433,15 @@
                 description: "پارچه‌های رنگارنگ و طرح‌دار که به عنوان لباس یا تزئینات استفاده می‌شوند. سارافان‌های بالی به دلیل زیبایی و راحتی محبوبیت زیادی دارند.",
                 avgPriceUSD: 20,
                 localPrice: "300,000 IDR",
-                category: ["پوشاک", "دکوری"],
-                audience: ["زنان", "جوانان"],
+                category: ["پوشاک", "دکوری", "فرهنگی"],
+                audience: ["زنان", "جوانان", "گردشگران"],
                 materials: "پنبه، ریون",
                 usage: "لباس ساحلی، دکور، هدیه",
                 culturalValue: 6,
                 economicValue: 5,
-                imageUrl: "https://placehold.co/400x300/FFDDC1/FFFFFF?text=Sarong+Fabric"
+                imageUrl: "https://placehold.co/400x300/FFDDC1/FFFFFF?text=Sarong+Fabric",
+                annualProductionUnits: 180000,
+                annualSalesRevenueUSD: 3600000
             },
             {
                 id: 14,
@@ -425,13 +453,15 @@
                 description: "ساعتی دیواری با مکانیزم خاص که در هر ساعت، پرنده‌ای (کوکو) از آن بیرون آمده و آواز می‌خواند. اغلب با کنده‌کاری‌های چوبی تزئین شده است.",
                 avgPriceUSD: 200,
                 localPrice: "180 EUR",
-                category: ["دکوری", "صنایع دستی", "لوکس"],
-                audience: ["بزرگسالان", "علاقه‌مندان به هنر", "قشر پولدار"],
+                category: ["دکوری", "صنایع دستی", "لوکس", "هنری"],
+                audience: ["بزرگسالان", "علاقه‌مندان به هنر", "قشر پولدار", "کلکسیونرها"],
                 materials: "چوب، فلز",
                 usage: "تزئین منزل، ساعت دیواری، کلکسیون",
                 culturalValue: 8,
                 economicValue: 8,
-                imageUrl: "https://placehold.co/400x300/B5EAD7/FFFFFF?text=Cuckoo+Clock"
+                imageUrl: "https://placehold.co/400x300/B5EAD7/FFFFFF?text=Cuckoo+Clock",
+                annualProductionUnits: 15000,
+                annualSalesRevenueUSD: 3000000
             },
             {
                 id: 15,
@@ -443,8 +473,8 @@
                 description: "ظروف سرامیکی با نقاشی‌های آبی روی زمینه سفید که به دلیل زیبایی و کیفیت بالا شهرت جهانی دارند. شامل گلدان‌ها، بشقاب‌ها و فنجان‌ها.",
                 avgPriceUSD: 75,
                 localPrice: "500 CNY",
-                category: ["دکوری", "صنایع دستی", "لوازم آشپزخانه"],
-                audience: ["علاقه‌مندان به هنر", "بزرگسالان", "قشر متوسط"],
+                category: ["دکوری", "صنایع دستی", "لوازم آشپزخانه", "هنری"],
+                audience: ["علاقه‌مندان به هنر", "بزرگسالان", "قشر متوسط", "کلکسیونرها"],
                 materials: "خاک کائولین، کبالت",
                 usage: "تزئین منزل، ظروف غذاخوری، کلکسیون",
                 culturalValue: 9,
@@ -454,7 +484,9 @@
                     sales: "مشکلات فروش شامل قیمت بالا و نیاز به بسته‌بندی ایمن برای حمل و نقل.",
                     development: "فرصت‌ها شامل بازاریابی به عنوان کالای لوکس، همکاری با طراحان مدرن و گسترش به بازارهای بین‌المللی."
                 },
-                imageUrl: "https://placehold.co/400x300/C7CEEA/FFFFFF?text=Blue+Porcelain"
+                imageUrl: "https://placehold.co/400x300/C7CEEA/FFFFFF?text=Blue+Porcelain",
+                annualProductionUnits: 100000,
+                annualSalesRevenueUSD: 7500000
             },
             {
                 id: 16,
@@ -466,13 +498,15 @@
                 description: "ماکت‌های کوچک از مجسمه‌های بودا که از برنز، چوب یا رزین ساخته می‌شوند. محبوب به عنوان یادگاری مذهبی و دکوری.",
                 avgPriceUSD: 40,
                 localPrice: "1200 THB",
-                category: ["دکوری", "مذهبی"],
-                audience: ["مذهبی‌ها", "علاقه‌مندان به فرهنگ", "بزرگسالان"],
+                category: ["دکوری", "مذهبی", "فرهنگی"],
+                audience: ["مذهبی‌ها", "علاقه‌مندان به فرهنگ", "بزرگسالان", "گردشگران"],
                 materials: "برنز، چوب، رزین",
                 usage: "مدیتیشن، دکور منزل، هدیه مذهبی",
                 culturalValue: 8,
                 economicValue: 6,
-                imageUrl: "https://placehold.co/400x300/FFAD60/FFFFFF?text=Buddha+Statue"
+                imageUrl: "https://placehold.co/400x300/FFAD60/FFFFFF?text=Buddha+Statue",
+                annualProductionUnits: 90000,
+                annualSalesRevenueUSD: 3600000
             },
             {
                 id: 17,
@@ -484,13 +518,15 @@
                 description: "کلاهی با لبه پهن و مخروطی شکل که اغلب با گلدوزی‌های رنگارنگ تزئین می‌شود. محبوب به عنوان سوغاتی و لباس محلی.",
                 avgPriceUSD: 30,
                 localPrice: "500 MXN",
-                category: ["پوشاک", "مد"],
-                audience: ["جوانان", "علاقه‌مندان به فرهنگ", "قشر متوسط"],
+                category: ["پوشاک", "مد", "فرهنگی"],
+                audience: ["جوانان", "علاقه‌مندان به فرهنگ", "قشر متوسط", "گردشگران"],
                 materials: "نی، پشم، پارچه",
                 usage: "لباس محلی، دکور، هدیه",
                 culturalValue: 7,
                 economicValue: 5,
-                imageUrl: "https://placehold.co/400x300/96CEB4/FFFFFF?text=Sombrero"
+                imageUrl: "https://placehold.co/400x300/96CEB4/FFFFFF?text=Sombrero",
+                annualProductionUnits: 110000,
+                annualSalesRevenueUSD: 3300000
             },
             {
                 id: 18,
@@ -502,13 +538,15 @@
                 description: "یک ساز بادی بلند و چوبی که صدای عمیق و طنین‌داری تولید می‌کند. نسخه‌های تزئینی آن به عنوان سوغاتی محبوب هستند.",
                 avgPriceUSD: 80,
                 localPrice: "120 AUD",
-                category: ["صنایع دستی", "موسیقی"],
-                audience: ["علاقه‌مندان به هنر", "علاقه‌مندان به موسیقی", "بزرگسالان"],
+                category: ["صنایع دستی", "موسیقی", "فرهنگی"],
+                audience: ["علاقه‌مندان به هنر", "علاقه‌مندان به موسیقی", "بزرگسالان", "کلکسیونرها"],
                 materials: "چوب اکالیپتوس",
                 usage: "ساز موسیقی، دکور، هدیه فرهنگی",
                 culturalValue: 9,
                 economicValue: 7,
-                imageUrl: "https://placehold.co/400x300/D9BF8F/FFFFFF?text=Didgeridoo"
+                imageUrl: "https://placehold.co/400x300/D9BF8F/FFFFFF?text=Didgeridoo",
+                annualProductionUnits: 30000,
+                annualSalesRevenueUSD: 2400000
             },
             {
                 id: 19,
@@ -521,12 +559,14 @@
                 avgPriceUSD: 50,
                 localPrice: "450 MAD",
                 category: ["لوازم آشپزخانه", "دکوری", "صنایع دستی"],
-                audience: ["بزرگسالان", "علاقه‌مندان به آشپزی"],
+                audience: ["بزرگسالان", "علاقه‌مندان به آشپزی", "گردشگران"],
                 materials: "خاک رس",
                 usage: "پخت و پز، دکوراسیون",
                 culturalValue: 8,
                 economicValue: 6,
-                imageUrl: "https://placehold.co/400x300/FFC18E/FFFFFF?text=Tagine+Pottery"
+                imageUrl: "https://placehold.co/400x300/FFC18E/FFFFFF?text=Tagine+Pottery",
+                annualProductionUnits: 50000,
+                annualSalesRevenueUSD: 2500000
             },
             {
                 id: 20,
@@ -538,13 +578,15 @@
                 description: "زیورآلات ساخته شده از کهربای طبیعی، شامل گردنبند، دستبند و گوشواره. محبوب به دلیل زیبایی و خواص درمانی.",
                 avgPriceUSD: 90,
                 localPrice: "350 PLN",
-                category: ["زیورآلات", "لوکس"],
-                audience: ["زنان", "قشر پولدار", "بزرگسالان"],
+                category: ["زیورآلات", "لوکس", "هنری"],
+                audience: ["زنان", "قشر پولدار", "بزرگسالان", "کلکسیونرها"],
                 materials: "کهربا، نقره",
                 usage: "پوشش، هدیه",
                 culturalValue: 7,
                 economicValue: 8,
-                imageUrl: "https://placehold.co/400x300/F0E68C/FFFFFF?text=Amber+Jewelry"
+                imageUrl: "https://placehold.co/400x300/F0E68C/FFFFFF?text=Amber+Jewelry",
+                annualProductionUnits: 25000,
+                annualSalesRevenueUSD: 2250000
             },
             {
                 id: 21,
@@ -557,12 +599,14 @@
                 avgPriceUSD: 120,
                 localPrice: "120 USD",
                 category: ["پوشاک", "مد", "لوکس"],
-                audience: ["بزرگسالان", "قشر پولدار", "قشر متوسط"],
+                audience: ["بزرگسالان", "قشر پولدار", "قشر متوسط", "مدگرایان"],
                 materials: "برگ توکیلا",
                 usage: "پوشش، مد و فشن",
                 culturalValue: 8,
                 economicValue: 7,
-                imageUrl: "https://placehold.co/400x300/ADD8E6/FFFFFF?text=Panama+Hat"
+                imageUrl: "https://placehold.co/400x300/ADD8E6/FFFFFF?text=Panama+Hat",
+                annualProductionUnits: 18000,
+                annualSalesRevenueUSD: 2160000
             },
             {
                 id: 22,
@@ -574,13 +618,15 @@
                 description: "ماکت‌های کوچک از گیشاها با لباس‌های سنتی و جزئیات دقیق، ساخته شده از رزین یا سرامیک.",
                 avgPriceUSD: 50,
                 localPrice: "6000 JPY",
-                category: ["دکوری", "صنایع دستی"],
-                audience: ["علاقه‌مندان به هنر", "بزرگسالان", "زنان"],
+                category: ["دکوری", "صنایع دستی", "فرهنگی"],
+                audience: ["علاقه‌مندان به هنر", "بزرگسالان", "زنان", "کلکسیونرها"],
                 materials: "رزین، سرامیک",
                 usage: "دکور منزل، کلکسیون",
                 culturalValue: 8,
                 economicValue: 6,
-                imageUrl: "https://placehold.co/400x300/F0F8FF/FFFFFF?text=Geisha+Figurine"
+                imageUrl: "https://placehold.co/400x300/F0F8FF/FFFFFF?text=Geisha+Figurine",
+                annualProductionUnits: 45000,
+                annualSalesRevenueUSD: 2250000
             },
             {
                 id: 23,
@@ -592,13 +638,15 @@
                 description: "ظروف سفالی با لعاب قلع و نقاشی‌های رنگارنگ, شامل بشقاب‌ها، کاسه‌ها و گلدان‌ها. محبوب به دلیل زیبایی و هنر دست.",
                 avgPriceUSD: 80,
                 localPrice: "75 EUR",
-                category: ["صنایع دستی", "دکوری", "لوازم آشپزخانه"],
-                audience: ["علاقه‌مندان به هنر", "بزرگسالان", "قشر متوسط"],
+                category: ["صنایع دستی", "دکوری", "لوازم آشپزخانه", "هنری"],
+                audience: ["علاقه‌مندان به هنر", "بزرگسالان", "قشر متوسط", "گردشگران"],
                 materials: "خاک رس، لعاب قلع",
                 usage: "دکور منزل، ظروف غذاخوری",
                 culturalValue: 9,
                 economicValue: 7,
-                imageUrl: "https://placehold.co/400x300/D3D3D3/FFFFFF?text=Majolica+Pottery"
+                imageUrl: "https://placehold.co/400x300/D3D3D3/FFFFFF?text=Majolica+Pottery",
+                annualProductionUnits: 35000,
+                annualSalesRevenueUSD: 2800000
             },
             {
                 id: 24,
@@ -610,13 +658,15 @@
                 description: "ظروف، مجسمه‌ها و جواهرات ساخته شده از شیشه مورانو، معروف به رنگ‌های زنده و طرح‌های پیچیده.",
                 avgPriceUSD: 150,
                 localPrice: "140 EUR",
-                category: ["صنایع دستی", "دکوری", "لوکس"],
-                audience: ["علاقه‌مندان به هنر", "قشر پولدار", "بزرگسالان"],
+                category: ["صنایع دستی", "دکوری", "لوکس", "هنری"],
+                audience: ["علاقه‌مندان به هنر", "قشر پولدار", "بزرگسالان", "کلکسیونرها"],
                 materials: "شیشه",
                 usage: "تزئین منزل، هدیه لوکس، کلکسیون",
                 culturalValue: 10,
                 economicValue: 9,
-                imageUrl: "https://placehold.co/400x300/B0E0E6/FFFFFF?text=Murano+Glassware"
+                imageUrl: "https://placehold.co/400x300/B0E0E6/FFFFFF?text=Murano+Glassware",
+                annualProductionUnits: 12000,
+                annualSalesRevenueUSD: 1800000
             },
             {
                 id: 25,
@@ -628,13 +678,15 @@
                 description: "چاقوی چندکاره با ابزارهای مختلف مانند چاقو، قیچی، پیچ‌گوشتی و دربازکن. محبوب به دلیل کاربردی بودن و کیفیت بالا.",
                 avgPriceUSD: 40,
                 localPrice: "35 CHF",
-                category: ["ابزار", "کاربردی"],
-                audience: ["بزرگسالان", "ورزشکاران", "جوانان"],
+                category: ["ابزار", "کاربردی", "ورزشی"],
+                audience: ["بزرگسالان", "ورزشکاران", "جوانان", "طبیعت‌گردان"],
                 materials: "فولاد ضد زنگ، پلاستیک",
                 usage: "استفاده روزمره، کمپینگ، هدیه",
                 culturalValue: 7,
                 economicValue: 7,
-                imageUrl: "https://placehold.co/400x300/FF6347/FFFFFF?text=Swiss+Knife"
+                imageUrl: "https://placehold.co/400x300/FF6347/FFFFFF?text=Swiss+Knife",
+                annualProductionUnits: 250000,
+                annualSalesRevenueUSD: 10000000
             },
             {
                 id: 26,
@@ -646,13 +698,15 @@
                 description: "مجسمه‌های سفالی رنگارنگ به شکل گاو که نماد خوش‌شانسی و محافظت در فرهنگ پرو هستند.",
                 avgPriceUSD: 25,
                 localPrice: "80 PEN",
-                category: ["دکوری", "صنایع دستی"],
-                audience: ["بزرگسالان", "علاقه‌مندان به فرهنگ"],
+                category: ["دکوری", "صنایع دستی", "فرهنگی"],
+                audience: ["بزرگسالان", "علاقه‌مندان به فرهنگ", "گردشگران"],
                 materials: "سفال",
                 usage: "دکور منزل، هدیه خوش‌شانسی",
                 culturalValue: 8,
                 economicValue: 6,
-                imageUrl: "https://placehold.co/400x300/8A2BE2/FFFFFF?text=Pucara+Bull"
+                imageUrl: "https://placehold.co/400x300/8A2BE2/FFFFFF?text=Pucara+Bull",
+                annualProductionUnits: 80000,
+                annualSalesRevenueUSD: 2000000
             },
             {
                 id: 27,
@@ -664,13 +718,15 @@
                 description: "کلاه خزدار با گوش‌پوش‌های تاشو که در هوای سرد محافظت می‌کند. محبوب به عنوان سوغاتی و لباس گرم.",
                 avgPriceUSD: 40,
                 localPrice: "3000 RUB",
-                category: ["پوشاک", "مد"],
-                audience: ["بزرگسالان", "مردان", "جوانان"],
+                category: ["پوشاک", "مد", "فرهنگی"],
+                audience: ["بزرگسالان", "مردان", "جوانان", "گردشگران"],
                 materials: "خز مصنوعی، پشم",
                 usage: "پوشش زمستانی، مد",
                 culturalValue: 7,
                 economicValue: 6,
-                imageUrl: "https://placehold.co/400x300/B0C4DE/FFFFFF?text=Ushanka+Hat"
+                imageUrl: "https://placehold.co/400x300/B0C4DE/FFFFFF?text=Ushanka+Hat",
+                annualProductionUnits: 60000,
+                annualSalesRevenueUSD: 2400000
             },
             {
                 id: 28,
@@ -682,13 +738,15 @@
                 description: "ماکت‌های کوچک از مجسمه معروف مانکن پیزاررو در بروکسل، اغلب با لباس‌های مختلف.",
                 avgPriceUSD: 15,
                 localPrice: "12 EUR",
-                category: ["دکوری", "طنز"],
-                audience: ["جوانان", "همه"],
+                category: ["دکوری", "طنز", "یادگاری"],
+                audience: ["جوانان", "همه", "گردشگران"],
                 materials: "برنز، رزین",
                 usage: "دکور میز، یادگاری طنزآمیز",
                 culturalValue: 6,
                 economicValue: 5,
-                imageUrl: "https://placehold.co/400x300/E6E6FA/FFFFFF?text=Manneken+Pis"
+                imageUrl: "https://placehold.co/400x300/E6E6FA/FFFFFF?text=Manneken+Pis",
+                annualProductionUnits: 150000,
+                annualSalesRevenueUSD: 2250000
             },
             {
                 id: 29,
@@ -700,13 +758,15 @@
                 description: "ظروف سرامیکی با نقاشی‌های آبی روی زمینه سفید، شامل بشقاب‌ها، گلدان‌ها و کاشی‌ها. معروف به طرح‌های آسیاب بادی و گل لاله.",
                 avgPriceUSD: 60,
                 localPrice: "55 EUR",
-                category: ["دکوری", "صنایع دستی", "لوازم آشپزخانه"],
-                audience: ["علاقه‌مندان به هنر", "بزرگسالان", "قشر متوسط"],
+                category: ["دکوری", "صنایع دستی", "لوازم آشپزخانه", "هنری"],
+                audience: ["علاقه‌مندان به هنر", "بزرگسالان", "قشر متوسط", "کلکسیونرها"],
                 materials: "خاک رس، لعاب",
                 usage: "تزئین منزل، ظروف کاربردی",
                 culturalValue: 9,
                 economicValue: 7,
-                imageUrl: "https://placehold.co/400x300/ADD8E6/FFFFFF?text=Delft+Pottery"
+                imageUrl: "https://placehold.co/400x300/ADD8E6/FFFFFF?text=Delft+Pottery",
+                annualProductionUnits: 65000,
+                annualSalesRevenueUSD: 3900000
             },
             {
                 id: 30,
@@ -718,13 +778,15 @@
                 description: "ساز زهی با بدنه‌ای گرد و پوستی کشیده. نسخه‌های کوچک‌تر آن به عنوان سوغاتی محبوب هستند.",
                 avgPriceUSD: 100,
                 localPrice: "100 USD",
-                category: ["صنایع دستی", "موسیقی"],
-                audience: ["علاقه‌مندان به موسیقی", "علاقه‌مندان به تاریخ", "بزرگسالان"],
+                category: ["صنایع دستی", "موسیقی", "فرهنگی"],
+                audience: ["علاقه‌مندان به موسیقی", "علاقه‌مندان به تاریخ", "بزرگسالان", "کلکسیونرها"],
                 materials: "چوب، فلز، پوست حیوان",
                 usage: "موسیقی، دکور",
                 culturalValue: 7,
                 economicValue: 6,
-                imageUrl: "https://placehold.co/400x300/F0E68C/FFFFFF?text=Banjo"
+                imageUrl: "https://placehold.co/400x300/F0E68C/FFFFFF?text=Banjo",
+                annualProductionUnits: 20000,
+                annualSalesRevenueUSD: 2000000
             },
             {
                 id: 31,
@@ -736,13 +798,15 @@
                 description: "دستبندهای رنگارنگ ساخته شده از کائوچو یا سیلیکون، اغلب با نمادهای برزیلی مانند پرچم یا سواحل ریو.",
                 avgPriceUSD: 5,
                 localPrice: "25 BRL",
-                category: ["زیورآلات", "مد"],
-                audience: ["جوانان", "کودکان", "ورزشکاران"],
+                category: ["زیورآلات", "مد", "یادگاری"],
+                audience: ["جوانان", "کودکان", "ورزشکاران", "همه"],
                 materials: "کائوچو، سیلیکون",
                 usage: "پوشش روزمره، یادگاری ارزان",
                 culturalValue: 5,
                 economicValue: 4,
-                imageUrl: "https://placehold.co/400x300/FFD700/FFFFFF?text=Rubber+Bracelets"
+                imageUrl: "https://placehold.co/400x300/FFD700/FFFFFF?text=Rubber+Bracelets",
+                annualProductionUnits: 500000,
+                annualSalesRevenueUSD: 2500000
             },
             {
                 id: 32,
@@ -754,13 +818,15 @@
                 description: "عروسک‌های کوچک ساخته شده از پارچه، چوب یا مواد طبیعی، اغلب با سوزن‌های تزئینی. به عنوان سوغاتی فرهنگی و گاهی ترسناک محبوب هستند.",
                 avgPriceUSD: 20,
                 localPrice: "250 HTG",
-                category: ["دکوری", "فرهنگی خاص"],
-                audience: ["علاقه‌مندان به فرهنگ‌های خاص", "بزرگسالان"],
+                category: ["دکوری", "فرهنگی خاص", "هنری"],
+                audience: ["علاقه‌مندان به فرهنگ‌های خاص", "بزرگسالان", "کلکسیونرها"],
                 materials: "پارچه، چوب، الیاف طبیعی",
                 usage: "دکور، کلکسیون",
                 culturalValue: 7,
                 economicValue: 5,
-                imageUrl: "https://placehold.co/400x300/8B4513/FFFFFF?text=Voodoo+Doll"
+                imageUrl: "https://placehold.co/400x300/8B4513/FFFFFF?text=Voodoo+Doll",
+                annualProductionUnits: 30000,
+                annualSalesRevenueUSD: 600000
             },
             {
                 id: 33,
@@ -772,13 +838,15 @@
                 description: "کلاه نرم و گرد از جنس پشم یا نمد. محبوب به عنوان نمادی از استایل فرانسوی.",
                 avgPriceUSD: 30,
                 localPrice: "28 EUR",
-                category: ["پوشاک", "مد"],
-                audience: ["بزرگسالان", "زنان", "مردان"],
+                category: ["پوشاک", "مد", "فرهنگی"],
+                audience: ["بزرگسالان", "زنان", "مردان", "مدگرایان"],
                 materials: "پشم، نمد",
                 usage: "پوشش روزمره، مد و فشن",
                 culturalValue: 7,
                 economicValue: 6,
-                imageUrl: "https://placehold.co/400x300/DDA0DD/FFFFFF?text=Beret"
+                imageUrl: "https://placehold.co/400x300/DDA0DD/FFFFFF?text=Beret",
+                annualProductionUnits: 100000,
+                annualSalesRevenueUSD: 3000000
             },
             {
                 id: 34,
@@ -790,13 +858,15 @@
                 description: "مجسمه‌های سرامیکی رنگارنگ به شکل خروس که نماد ملی پرتغال و خوش‌شانسی هستند.",
                 avgPriceUSD: 20,
                 localPrice: "18 EUR",
-                category: ["دکوری", "صنایع دستی"],
-                audience: ["بزرگسالان", "همه"],
+                category: ["دکوری", "صنایع دستی", "فرهنگی"],
+                audience: ["بزرگسالان", "همه", "گردشگران"],
                 materials: "سرامیک",
                 usage: "دکور منزل، هدیه خوش‌شانسی",
                 culturalValue: 8,
                 economicValue: 6,
-                imageUrl: "https://placehold.co/400x300/FFC0CB/FFFFFF?text=Rooster+Barcelos"
+                imageUrl: "https://placehold.co/400x300/FFC0CB/FFFFFF?text=Rooster+Barcelos",
+                annualProductionUnits: 70000,
+                annualSalesRevenueUSD: 1400000
             },
             {
                 id: 35,
@@ -808,13 +878,15 @@
                 description: "عروسک‌های کوچک با موهای نامرتب و چهره‌های بامزه. محبوب به عنوان یادگاری و اسباب‌بازی.",
                 avgPriceUSD: 15,
                 localPrice: "150 NOK",
-                category: ["اسباب بازی", "دکوری"],
-                audience: ["کودکان", "جوانان"],
+                category: ["اسباب بازی", "دکوری", "فرهنگی"],
+                audience: ["کودکان", "جوانان", "همه"],
                 materials: "پلاستیک، خز مصنوعی",
                 usage: "اسباب بازی، دکور",
                 culturalValue: 6,
                 economicValue: 5,
-                imageUrl: "https://placehold.co/400x300/98FB98/FFFFFF?text=Troll+Doll"
+                imageUrl: "https://placehold.co/400x300/98FB98/FFFFFF?text=Troll+Doll",
+                annualProductionUnits: 90000,
+                annualSalesRevenueUSD: 1350000
             },
             {
                 id: 36,
@@ -826,13 +898,15 @@
                 description: "مجسمه‌های کوچک از گوزن شمالی, اغلب از چوب یا شاخ گوزن ساخته می‌شوند. محبوب به عنوان سوغاتی از مناطق شمالی.",
                 avgPriceUSD: 30,
                 localPrice: "25 EUR",
-                category: ["دکوری", "صنایع دستی"],
-                audience: ["کودکان", "بزرگسالان"],
+                category: ["دکوری", "صنایع دستی", "فرهنگی"],
+                audience: ["کودکان", "بزرگسالان", "گردشگران"],
                 materials: "چوب، شاخ گوزن",
                 usage: "دکور میز، یادگاری",
                 culturalValue: 7,
                 economicValue: 6,
-                imageUrl: "https://placehold.co/400x300/ADD8E6/FFFFFF?text=Reindeer+Figurine"
+                imageUrl: "https://placehold.co/400x300/ADD8E6/FFFFFF?text=Reindeer+Figurine",
+                annualProductionUnits: 40000,
+                annualSalesRevenueUSD: 1200000
             },
             {
                 id: 37,
@@ -844,13 +918,15 @@
                 description: "ظروف سرامیکی با نقاشی‌های آبی روی زمینه سفید، اغلب با طرح‌های گل و پرنده. شامل بشقاب‌ها، فنجان‌ها و مجسمه‌ها.",
                 avgPriceUSD: 40,
                 localPrice: "2800 RUB",
-                category: ["دکوری", "صنایع دستی", "لوازم آشپزخانه"],
-                audience: ["علاقه‌مندان به هنر", "بزرگسالان"],
+                category: ["دکوری", "صنایع دستی", "لوازم آشپزخانه", "هنری"],
+                audience: ["علاقه‌مندان به هنر", "بزرگسالان", "کلکسیونرها"],
                 materials: "خاک رس، لعاب",
                 usage: "تزئین منزل، ظروف کاربردی",
                 culturalValue: 8,
                 economicValue: 7,
-                imageUrl: "https://placehold.co/400x300/87CEEB/FFFFFF?text=Gzhel+Pottery"
+                imageUrl: "https://placehold.co/400x300/87CEEB/FFFFFF?text=Gzhel+Pottery",
+                annualProductionUnits: 60000,
+                annualSalesRevenueUSD: 2400000
             },
             {
                 id: 38,
@@ -862,13 +938,15 @@
                 description: "کلاه مخروطی شکل قرمز یا مشکی با یک منگوله سیاه. محبوب به عنوان سوغاتی و لباس سنتی.",
                 avgPriceUSD: 20,
                 localPrice: "300 TRY",
-                category: ["پوشاک", "مد"],
-                audience: ["مردان", "علاقه‌مندان به فرهنگ"],
+                category: ["پوشاک", "مد", "فرهنگی"],
+                audience: ["مردان", "علاقه‌مندان به فرهنگ", "گردشگران"],
                 materials: "پشم، نمد",
                 usage: "لباس سنتی، دکور",
                 culturalValue: 7,
                 economicValue: 5,
-                imageUrl: "https://placehold.co/400x300/CD5C5C/FFFFFF?text=Fez+Hat"
+                imageUrl: "https://placehold.co/400x300/CD5C5C/FFFFFF?text=Fez+Hat",
+                annualProductionUnits: 90000,
+                annualSalesRevenueUSD: 1800000
             },
             {
                 id: 39,
@@ -880,13 +958,15 @@
                 description: "عروسک‌های چوبی دست‌ساز با بدنه‌ای ساده و سری بزرگ، اغلب با نقاشی‌های ساده. محبوب به عنوان دکوری و هدیه.",
                 avgPriceUSD: 30,
                 localPrice: "3500 JPY",
-                category: ["دکوری", "اسباب بازی"],
-                audience: ["کودکان", "علاقه‌مندان به فرهنگ"],
+                category: ["دکوری", "اسباب بازی", "فرهنگی"],
+                audience: ["کودکان", "علاقه‌مندان به فرهنگ", "کلکسیونرها"],
                 materials: "چوب، رنگ",
                 usage: "دکور منزل، هدیه، کلکسیون",
                 culturalValue: 8,
                 economicValue: 6,
-                imageUrl: "https://placehold.co/400x300/F0E68C/FFFFFF?text=Kokeshi+Doll"
+                imageUrl: "https://placehold.co/400x300/F0E68C/FFFFFF?text=Kokeshi+Doll",
+                annualProductionUnits: 80000,
+                annualSalesRevenueUSD: 2400000
             },
             {
                 id: 40,
@@ -899,12 +979,14 @@
                 avgPriceUSD: 60,
                 localPrice: "800 TRY",
                 category: ["لوازم آشپزخانه", "دکوری", "صنایع دستی"],
-                audience: ["بزرگسالان", "علاقه‌مندان به آشپزی"],
+                audience: ["بزرگسالان", "علاقه‌مندان به آشپزی", "گردشگران"],
                 materials: "مس",
                 usage: "پخت و پز، دکوراسیون",
                 culturalValue: 8,
                 economicValue: 7,
-                imageUrl: "https://placehold.co/400x300/CD853F/FFFFFF?text=Copperware"
+                imageUrl: "https://placehold.co/400x300/CD853F/FFFFFF?text=Copperware",
+                annualProductionUnits: 40000,
+                annualSalesRevenueUSD: 2400000
             },
             {
                 id: 41,
@@ -916,13 +998,15 @@
                 description: "ماکت‌های کوچک از مجسمه‌های فرعون که از مواد مختلفی مانند سنگ، رزین یا فلز ساخته می‌شوند.",
                 avgPriceUSD: 20,
                 localPrice: "350 EGP",
-                category: ["دکوری", "تاریخی"],
+                category: ["دکوری", "تاریخی", "یادگاری"],
                 audience: ["جوانان", "علاقه‌مندان به تاریخ", "کودکان"],
-                materials: "رزین، سنگ",
+                materials: "رزین",
                 usage: "دکور میز، یادگاری سفر",
                 culturalValue: 7,
                 economicValue: 5,
-                imageUrl: "https://placehold.co/400x300/D8BFD8/FFFFFF?text=Pharaoh+Figurine"
+                imageUrl: "https://placehold.co/400x300/D8BFD8/FFFFFF?text=Pharaoh+Figurine",
+                annualProductionUnits: 100000,
+                annualSalesRevenueUSD: 2000000
             },
             {
                 id: 42,
@@ -934,13 +1018,15 @@
                 description: "عروسک‌های دست‌ساز با لباس‌های سنتی رنگارنگ که فرهنگ محلی رومانی را به نمایش می‌گذارند.",
                 avgPriceUSD: 25,
                 localPrice: "100 RON",
-                category: ["دکوری", "اسباب بازی", "صنایع دستی"],
+                category: ["دکوری", "اسباب بازی", "صنایع دستی", "فرهنگی"],
                 audience: ["بزرگسالان", "کودکان", "علاقه‌مندان به فرهنگ"],
                 materials: "پارچه، پشم، چوب",
                 usage: "دکور منزل، هدیه فرهنگی",
                 culturalValue: 7,
                 economicValue: 6,
-                imageUrl: "https://placehold.co/400x300/FFB6C1/FFFFFF?text=Folklore+Dolls"
+                imageUrl: "https://placehold.co/400x300/FFB6C1/FFFFFF?text=Folklore+Dolls",
+                annualProductionUnits: 70000,
+                annualSalesRevenueUSD: 1750000
             },
             {
                 id: 43,
@@ -952,13 +1038,15 @@
                 description: "ظروف و اشیاء تزئینی ساخته شده از کریستال بوهمیا, شامل لیوان‌ها، گلدان‌ها و مجسمه‌ها.",
                 avgPriceUSD: 100,
                 localPrice: "2300 CZK",
-                category: ["صنایع دستی", "دکوری", "لوکس"],
-                audience: ["علاقه‌مندان به هنر", "قشر پولدار", "بزرگسالان"],
+                category: ["صنایع دستی", "دکوری", "لوکس", "هنری"],
+                audience: ["علاقه‌مندان به هنر", "قشر پولدار", "بزرگسالان", "کلکسیونرها"],
                 materials: "کریستال",
                 usage: "تزئین منزل، هدیه لوکس",
                 culturalValue: 9,
                 economicValue: 8,
-                imageUrl: "https://placehold.co/400x300/AFEEEE/FFFFFF?text=Bohemian+Crystal"
+                imageUrl: "https://placehold.co/400x300/AFEEEE/FFFFFF?text=Bohemian+Crystal",
+                annualProductionUnits: 20000,
+                annualSalesRevenueUSD: 2000000
             },
             {
                 id: 44,
@@ -970,13 +1058,15 @@
                 description: "مجسمه‌های کوچک از اژدهای چینی، اغلب از سرامیک، برنز یا چوب ساخته می‌شوند.",
                 avgPriceUSD: 35,
                 localPrice: "250 CNY",
-                category: ["دکوری", "فرهنگی خاص"],
-                audience: ["بزرگسالان", "علاقه‌مندان به فرهنگ"],
+                category: ["دکوری", "فرهنگی خاص", "هنری"],
+                audience: ["بزرگسالان", "علاقه‌مندان به فرهنگ", "کلکسیونرها"],
                 materials: "سرامیک، برنز، چوب",
                 usage: "دکور منزل، هدیه خوش‌شانسی",
                 culturalValue: 8,
                 economicValue: 6,
-                imageUrl: "https://placehold.co/400x300/8B0000/FFFFFF?text=Chinese+Dragon"
+                imageUrl: "https://placehold.co/400x300/8B0000/FFFFFF?text=Chinese+Dragon",
+                annualProductionUnits: 85000,
+                annualSalesRevenueUSD: 2975000
             },
             {
                 id: 45,
@@ -988,13 +1078,15 @@
                 description: "ظروف سرامیکی با نقاشی‌های آبی، زرد، سبز و نارنجی روی زمینه سفید، شامل بشقاب‌ها، کاسه‌ها و کاشی‌ها.",
                 avgPriceUSD: 70,
                 localPrice: "1200 MXN",
-                category: ["صنایع دستی", "دکوری", "لوازم آشپزخانه"],
-                audience: ["علاقه‌مندان به هنر", "بزرگسالان", "قشر متوسط"],
+                category: ["صنایع دستی", "دکوری", "لوازم آشپزخانه", "هنری"],
+                audience: ["علاقه‌مندان به هنر", "بزرگسالان", "قشر متوسط", "گردشگران"],
                 materials: "خاک رس، لعاب",
                 usage: "تزئین منزل، ظروف غذاخوری",
                 culturalValue: 9,
                 economicValue: 7,
-                imageUrl: "https://placehold.co/400x300/F0F8FF/FFFFFF?text=Talavera+Pottery"
+                imageUrl: "https://placehold.co/400x300/F0F8FF/FFFFFF?text=Talavera+Pottery",
+                annualProductionUnits: 40000,
+                annualSalesRevenueUSD: 2800000
             },
             {
                 id: 46,
@@ -1007,12 +1099,14 @@
                 avgPriceUSD: 10,
                 localPrice: "9 EUR",
                 category: ["دکوری", "یادگاری"],
-                audience: ["همه", "جوانان", "کودکان"],
+                audience: ["همه", "جوانان", "کودکان", "گردشگران"],
                 materials: "فلز، پلاستیک",
                 usage: "دکور میز, یادگاری سفر",
                 culturalValue: 6,
                 economicValue: 5,
-                imageUrl: "https://placehold.co/400x300/87CEEB/FFFFFF?text=Eiffel+Tower"
+                imageUrl: "https://placehold.co/400x300/87CEEB/FFFFFF?text=Eiffel+Tower",
+                annualProductionUnits: 500000,
+                annualSalesRevenueUSD: 5000000
             },
             {
                 id: 47,
@@ -1025,12 +1119,14 @@
                 avgPriceUSD: 12,
                 localPrice: "12 USD",
                 category: ["دکوری", "یادگاری"],
-                audience: ["همه", "جوانان", "کودکان"],
+                audience: ["همه", "جوانان", "کودکان", "گردشگران"],
                 materials: "فلز، رزین",
                 usage: "دکور میز، یادگاری سفر",
                 culturalValue: 6,
                 economicValue: 5,
-                imageUrl: "https://placehold.co/400x300/B0C4DE/FFFFFF?text=Statue+Liberty"
+                imageUrl: "https://placehold.co/400x300/B0C4DE/FFFFFF?text=Statue+Liberty",
+                annualProductionUnits: 400000,
+                annualSalesRevenueUSD: 4800000
             },
             {
                 id: 48,
@@ -1043,12 +1139,14 @@
                 avgPriceUSD: 5,
                 localPrice: "متغیر",
                 category: ["دکوری", "یادگاری"],
-                audience: ["همه", "کودکان"],
+                audience: ["همه", "کودکان", "گردشگران"],
                 materials: "پلاستیک، فلز، رزین",
                 usage: "تزئین یخچال، کلکسیون",
                 culturalValue: 4,
                 economicValue: 4,
-                imageUrl: "https://placehold.co/400x300/F0F8FF/FFFFFF?text=Souvenir+Magnet"
+                imageUrl: "https://placehold.co/400x300/F0F8FF/FFFFFF?text=Souvenir+Magnet",
+                annualProductionUnits: 1000000,
+                annualSalesRevenueUSD: 5000000
             },
             {
                 id: 49,
@@ -1061,12 +1159,14 @@
                 avgPriceUSD: 20,
                 localPrice: "متغیر",
                 category: ["پوشاک", "یادگاری"],
-                audience: ["همه", "جوانان", "ورزشکاران"],
+                audience: ["همه", "جوانان", "ورزشکاران", "گردشگران"],
                 materials: "پنبه",
                 usage: "پوشش روزمره، یادگاری",
                 culturalValue: 5,
                 economicValue: 5,
-                imageUrl: "https://placehold.co/400x300/98FB98/FFFFFF?text=Local+T-shirt"
+                imageUrl: "https://placehold.co/400x300/98FB98/FFFFFF?text=Local+T-shirt",
+                annualProductionUnits: 300000,
+                annualSalesRevenueUSD: 6000000
             },
             {
                 id: 50,
@@ -1079,12 +1179,14 @@
                 avgPriceUSD: 7,
                 localPrice: "متغیر",
                 category: ["لوازم التحریر", "یادگاری"],
-                audience: ["همه", "دانشجوها", "کودکان"],
+                audience: ["همه", "دانشجوها", "کودکان", "گردشگران"],
                 materials: "فلز، پلاستیک",
                 usage: "نگهداری کلید، یادگاری",
                 culturalValue: 4,
                 economicValue: 4,
-                imageUrl: "https://placehold.co/400x300/FFDDC1/FFFFFF?text=Keychain"
+                imageUrl: "https://placehold.co/400x300/FFDDC1/FFFFFF?text=Keychain",
+                annualProductionUnits: 800000,
+                annualSalesRevenueUSD: 5600000
             },
             {
                 id: 51,
@@ -1096,13 +1198,15 @@
                 description: "کلاهی از جنس نمد یا چرم با لبه پهن، محبوب به عنوان سوغاتی و لباس محلی.",
                 avgPriceUSD: 60,
                 localPrice: "50,000 ARS",
-                category: ["پوشاک", "مد"],
-                audience: ["مردان", "علاقه‌مندان به فرهنگ"],
+                category: ["پوشاک", "مد", "فرهنگی"],
+                audience: ["مردان", "علاقه‌مندان به فرهنگ", "گردشگران"],
                 materials: "نمد، چرم",
                 usage: "پوشش، مد",
                 culturalValue: 7,
                 economicValue: 6,
-                imageUrl: "https://placehold.co/400x300/B5EAD7/FFFFFF?text=Gaucho+Hat"
+                imageUrl: "https://placehold.co/400x300/B5EAD7/FFFFFF?text=Gaucho+Hat",
+                annualProductionUnits: 25000,
+                annualSalesRevenueUSD: 1500000
             },
             {
                 id: 52,
@@ -1115,12 +1219,14 @@
                 avgPriceUSD: 18,
                 localPrice: "300 EGP",
                 category: ["دکوری", "تاریخی", "یادگاری"],
-                audience: ["همه", "علاقه‌مندان به تاریخ", "کودکان"],
+                audience: ["همه", "علاقه‌مندان به تاریخ", "کودکان", "گردشگران"],
                 materials: "سنگ، رزین",
                 usage: "دکور میز، یادگاری سفر",
                 culturalValue: 7,
                 economicValue: 5,
-                imageUrl: "https://placehold.co/400x300/A7D2CB/FFFFFF?text=Pyramid+Miniature"
+                imageUrl: "https://placehold.co/400x300/A7D2CB/FFFFFF?text=Pyramid+Miniature",
+                annualProductionUnits: 150000,
+                annualSalesRevenueUSD: 2700000
             },
             {
                 id: 53,
@@ -1132,47 +1238,228 @@
                 description: "ظروف سفالی دست‌ساز با طرح‌های رنگارنگ و سنتی، شامل کاسه‌ها، بشقاب‌ها و گلدان‌ها.",
                 avgPriceUSD: 40,
                 localPrice: "700 MXN",
-                category: ["صنایع دستی", "دکوری", "لوازم آشپزخانه"],
-                audience: ["علاقه‌مندان به هنر", "بزرگسالان", "قشر متوسط"],
+                category: ["صنایع دستی", "دکوری", "لوازم آشپزخانه", "هنری"],
+                audience: ["علاقه‌مندان به هنر", "بزرگسالان", "قشر متوسط", "گردشگران"],
                 materials: "خاک رس، رنگ‌های طبیعی",
                 usage: "تزئین منزل، ظروف کاربردی",
                 culturalValue: 8,
                 economicValue: 6,
-                imageUrl: "https://placehold.co/400x300/FFC72C/FFFFFF?text=Mexican+Pottery"
+                imageUrl: "https://placehold.co/400x300/FFC72C/FFFFFF?text=Mexican+Pottery",
+                annualProductionUnits: 60000,
+                annualSalesRevenueUSD: 2400000
+            },
+            // Add more products to reach a good count and diversity
+            {
+                id: 54,
+                name: "کلاه بافندگی دست‌ساز پرو",
+                englishName: "Peruvian Chullo Hat",
+                country: "پرو",
+                origin: "کوسکو",
+                story: "چولو، کلاه پشمی با گوش‌پوش‌های بلند، نمادی از فرهنگ آند و مقاومت در برابر سرمای کوهستان است. این کلاه‌ها اغلب با طرح‌های رنگارنگ و بومی تزئین می‌شوند.",
+                description: "کلاه پشمی دست‌باف با گوش‌پوش‌های بلند و طرح‌های سنتی آندی، ساخته شده از پشم آلپاکا یا لاما.",
+                avgPriceUSD: 30,
+                localPrice: "100 PEN",
+                category: ["پوشاک", "صنایع دستی", "فرهنگی"],
+                audience: ["همه", "گردشگران", "علاقه‌مندان به فرهنگ"],
+                materials: "پشم آلپاکا، پشم لاما",
+                usage: "پوشش روزمره، یادگاری",
+                culturalValue: 8,
+                economicValue: 7,
+                imageUrl: "https://placehold.co/400x300/FFA07A/FFFFFF?text=Peruvian+Hat",
+                annualProductionUnits: 50000,
+                annualSalesRevenueUSD: 1500000
+            },
+            {
+                id: 55,
+                name: "مجسمه کرگدن آفریقایی",
+                englishName: "African Rhino Figurine",
+                country: "آفریقای جنوبی",
+                origin: "کریوگر",
+                story: "کرگدن، یکی از 'پنج بزرگ' آفریقا، نمادی از حیات وحش بی‌نظیر این قاره است. مجسمه‌های آن یادآور سفرهای سافاری و حفاظت از محیط زیست هستند.",
+                description: "مجسمه‌های کوچک از کرگدن، اغلب از چوب، سنگ صابون یا رزین ساخته می‌شوند.",
+                avgPriceUSD: 45,
+                localPrice: "700 ZAR",
+                category: ["دکوری", "حیوانات وحشی", "یادگاری"],
+                audience: ["همه", "گردشگران", "علاقه‌مندان به طبیعت"],
+                materials: "چوب، سنگ صابون، رزین",
+                usage: "دکور منزل، یادگاری سفر",
+                culturalValue: 7,
+                economicValue: 6,
+                imageUrl: "https://placehold.co/400x300/D2B48C/FFFFFF?text=African+Rhino",
+                annualProductionUnits: 30000,
+                annualSalesRevenueUSD: 1350000
+            },
+            {
+                id: 56,
+                name: "نقاب سنتی کره جنوبی",
+                englishName: "Korean Hahoe Mask",
+                country: "کره جنوبی",
+                origin: "آندونگ",
+                story: "نقاب‌های هاووه بخشی از نمایش‌های سنتی کره‌ای هستند که طنز و انتقاد اجتماعی را در خود جای داده‌اند. این نقاب‌ها نمادی از هنر و فولکلور کره‌ای هستند.",
+                description: "نقاب‌های چوبی یا کاغذی با جزئیات دقیق، الهام گرفته از نقاب‌های سنتی هاووه.",
+                avgPriceUSD: 70,
+                localPrice: "85,000 KRW",
+                category: ["صنایع دستی", "دکوری", "فرهنگی"],
+                audience: ["علاقه‌مندان به هنر", "علاقه‌مندان به فرهنگ", "بزرگسالان"],
+                materials: "چوب، کاغذ سنتی",
+                usage: "دکور دیوار، هدیه فرهنگی",
+                culturalValue: 9,
+                economicValue: 7,
+                imageUrl: "https://placehold.co/400x300/B0E0E6/FFFFFF?text=Korean+Mask",
+                annualProductionUnits: 15000,
+                annualSalesRevenueUSD: 1050000
+            },
+            {
+                id: 57,
+                name: "کلاه غیرنظامی ویتنامی (نون لا)",
+                englishName: "Vietnamese Non La (Conical Hat)",
+                country: "ویتنام",
+                origin: "هوئه",
+                story: "نون لا، کلاه مخروطی سنتی ویتنامی، نمادی از زندگی روستایی و مقاومت در برابر آفتاب و باران است. این کلاه در طول تاریخ ویتنام نقشی اساسی داشته است.",
+                description: "کلاه مخروطی شکل ساخته شده از برگ نخل، محبوب در مناطق روستایی و به عنوان سوغاتی.",
+                avgPriceUSD: 10,
+                localPrice: "230,000 VND",
+                category: ["پوشاک", "فرهنگی", "کاربردی"],
+                audience: ["همه", "گردشگران", "قشر متوسط"],
+                materials: "برگ نخل",
+                usage: "پوشش روزمره، یادگاری",
+                culturalValue: 7,
+                economicValue: 5,
+                imageUrl: "https://placehold.co/400x300/ADD8E6/FFFFFF?text=Vietnamese+Hat",
+                annualProductionUnits: 200000,
+                annualSalesRevenueUSD: 2000000
+            },
+            {
+                id: 58,
+                name: "اشیاء لاکی هندی",
+                englishName: "Indian Lacquerware",
+                country: "هند",
+                origin: "جیپور، اودایپور",
+                story: "هنر لاکی‌کاری در هند قدمتی طولانی دارد و با ظرافت و رنگارنگی خود، نمادی از هنر درباری و سنتی هند است. این اشیاء با دست نقاشی می‌شوند.",
+                description: "ظروف، جعبه‌ها و مجسمه‌های کوچک ساخته شده از چوب با پوشش لاکی و نقاشی‌های دستی پیچیده.",
+                avgPriceUSD: 50,
+                localPrice: "4000 INR",
+                category: ["صنایع دستی", "دکوری", "هنری"],
+                audience: ["علاقه‌مندان به هنر", "بزرگسالان", "قشر پولدار"],
+                materials: "چوب، لاک طبیعی، رنگ",
+                usage: "دکور منزل، هدیه لوکس، کلکسیون",
+                culturalValue: 8,
+                economicValue: 7,
+                imageUrl: "https://placehold.co/400x300/FFDAB9/FFFFFF?text=Indian+Lacquerware",
+                annualProductionUnits: 30000,
+                annualSalesRevenueUSD: 1500000
+            },
+            {
+                id: 59,
+                name: "کلاه شکارچیان (ترجیحا از کانادا)",
+                englishName: "Trapper Hat",
+                country: "کانادا",
+                origin: "کانادا",
+                story: "کلاه شکارچیان، کلاهی گرم و محافظ در برابر سرما، نمادی از مناطق شمالی و طبیعت وحشی کانادا است. این کلاه به دلیل کاربردی بودن و سبک خاصش محبوب است.",
+                description: "کلاه خزدار با گوش‌پوش‌های بلند که در هوای سرد محافظت می‌کند. اغلب با خز مصنوعی یا واقعی ساخته می‌شود.",
+                avgPriceUSD: 60,
+                localPrice: "80 CAD",
+                category: ["پوشاک", "کاربردی", "مد"],
+                audience: ["بزرگسالان", "مردان", "طبیعت‌گردان"],
+                materials: "خز مصنوعی، پشم، چرم",
+                usage: "پوشش زمستانی، مد",
+                culturalValue: 7,
+                economicValue: 6,
+                imageUrl: "https://placehold.co/400x300/B0C4DE/FFFFFF?text=Trapper+Hat",
+                annualProductionUnits: 35000,
+                annualSalesRevenueUSD: 2100000
+            },
+            {
+                id: 60,
+                name: "ماکت ساختمان‌های مشهور (امارات)",
+                englishName: "Famous Building Miniatures (UAE)",
+                country: "امارات متحده عربی",
+                origin: "دبی، ابوظبی",
+                story: "دبی و ابوظبی با معماری مدرن و برج‌های سر به فلک کشیده خود شهرت دارند. ماکت‌های این ساختمان‌ها نمادی از پیشرفت و جاه‌طلبی این کشورها هستند.",
+                description: "ماکت‌های کوچک از برج خلیفه، برج العرب و سایر ساختمان‌های معروف امارات.",
+                avgPriceUSD: 25,
+                localPrice: "90 AED",
+                category: ["دکوری", "یادگاری", "مدرن"],
+                audience: ["همه", "گردشگران", "علاقه‌مندان به معماری"],
+                materials: "فلز، رزین، پلاستیک",
+                usage: "دکور میز، یادگاری سفر",
+                culturalValue: 6,
+                economicValue: 5,
+                imageUrl: "https://placehold.co/400x300/ADD8E6/FFFFFF?text=Burj+Khalifa",
+                annualProductionUnits: 180000,
+                annualSalesRevenueUSD: 4500000
+            },
+        ];
+
+        // --- Stores Data ---
+        // Generates dummy data for 100 stores
+        const storesData = [];
+        const storeNames = [
+            "The Souvenir Emporium", "Global Gifts Hub", "Artisan Alley", "Cultural Crafts Corner", "Travel Treasures",
+            "Unique Keepsakes", "Wanderlust Wares", "Heritage Handiworks", "The Local Touch", "Passport Presents",
+            "Around the World Store", "Discovery Depot", "The Curiosity Shop", "Memory Lane Gifts", "Tradition & Trinkets",
+            "Exotic Finds", "The Globe Galleria", "Journey Junction", "The Grand Bazaar Express", "Culture Cartel",
+            "Handmade Haven", "The Traveler's Trove", "Authentic Artifacts", "Global Gallery", "The Souvenir Stop",
+            "The World Market", "Craft & Culture Co.", "Destination Delights", "Keepsake Kingdom", "The Global Village",
+            "Wonders of the World", "Artisan's Guild", "The Memory Mart", "Roots & Riches", "The Culture Collection",
+            "Passport & Prices", "Souvenir Sensations", "Woven Wonders", "The Journey's End", "Global Gemstones",
+            "Timeless Trinkets", "Heritage Hues", "The Nomad's Nest", "Explore & Adore", "The World's Best Souvenirs",
+            "Cultural Canvas", "The Artisan's Touch", "Global Expressions", "Unique Universe", "Voyager's Vault",
+            "Tradition & Trends", "The Global Exchange", "Dream Destination Gifts", "Handcrafted Harmony", "The Heritage House",
+            "Souvenir Sparkle", "Wanderlust Wonders", "Cultural Curios", "The Gift Globe", "Journey's Keepsakes",
+            "Authentic Arts", "Global Goods", "The Cultural Hub", "Memory Moments", "Tradition's Touch",
+            "Exotic Elegance", "The World's Riches", "Discovery Delights", "Keepsake Crafts", "The Global Bazaar",
+            "Wonders & Wares", "Artisan Aura", "The Traveler's Dream", "Roots & Royalty", "Culture Cornerstones",
+            "Passport & Pearls", "Souvenir Style", "Woven Whimsy", "The Journey Ahead", "Global Glow",
+            "Timeless Trinkets", "Heritage Hangouts", "The Nomad's Nook", "Explore & Enjoy", "The World's Gems",
+            "Cultural Colors", "The Artisan's Ark", "Global Echoes", "Unique Ventures", "Voyager's Visions",
+            "Tradition & Taste", "The Global Oasis", "Dream Destination Finds", "Handcrafted Heaven", "The Heritage Heart"
+        ];
+        const countriesForStores = [
+            "آنلاین", "بریتانیا", "روسیه", "ژاپن", "مصر", "ایران", "ایتالیا", "آمریکا", "استرالیا", "مراکش",
+            "یونان", "آلمان", "مکزیک", "ترکیه", "ایرلند", "سوئیس", "هلند", "تایلند", "برزیل", "هائیتی",
+            "فرانسه", "پرتغال", "نروژ", "پرو", "فنلاند", "جمهوری چک", "چین", "هند", "کره جنوبی", "ویتنام",
+            "آرژانتین", "آفریقای جنوبی", "کانادا", "امارات متحده عربی", "اکوادور", "بلژیک", "رومانی"
+        ];
+        const popularProductsList = [
+            "صنایع دستی چوبی", "لباس‌های محلی", "جواهرات نقره", "سرامیک‌های دست‌ساز", "فرش و گلیم",
+            "اشیای دکوری", "ماکت‌های جاذبه‌ها", "ابزار سنتی", "کلاه و پوشاک", "سفالینه‌های رنگی",
+            "محصولات چرمی", "منسوجات دست‌باف", "عروسک‌های سنتی", "محصولات سنگی", "زیورآلات کهربا"
+        ];
+        const locations = [
+            "خیابان اصلی، مرکز شهر", "بازار بزرگ، منطقه تاریخی", "مرکز خرید مدرن", "نزدیک جاذبه توریستی", "فرودگاه بین‌المللی",
+            "بلوار ساحلی", "منطقه هنری", "خیابان خرید لوکس", "دهکده صنایع دستی", "آنلاین (دفتر مرکزی در شهر اصلی)"
+        ];
+
+        for (let i = 0; i < 100; i++) {
+            const country = countriesForStores[Math.floor(Math.random() * countriesForStores.length)];
+            const productsCount = Math.floor(Math.random() * 3) + 1; // 1 to 3 products
+            const products = [];
+            for (let j = 0; j < productsCount; j++) {
+                products.push(popularProductsList[Math.floor(Math.random() * popularProductsList.length)]);
             }
-        ];
 
-        const storesData = [
-            { name: "Global Souvenirs", country: "آنلاین", website: "https://www.globalsouvenirs.com" },
-            { name: "The Souvenir Shop", country: "بریتانیا", website: "https://www.thesouvenirshop.co.uk" },
-            { name: "GUM", country: "روسیه", website: "https://gumrussia.com" },
-            { name: "Mitsukoshi", country: "ژاپن", website: "https://www.mitsukoshi.mistore.jp" },
-            { name: "Khan el-Khalili", country: "مصر", website: "#" },
-            { name: "Pari-Market", country: "ایران", website: "https://pari-market.com" },
-            { name: "Il Papiro", country: "ایتالیا", website: "https://www.ilpapirofirenze.com" },
-            { name: "Cavender's", country: "آمریکا", website: "https://www.cavenders.com" },
-            { name: "Aboriginal Art & Culture Centre", country: "استرالیا", website: "https://www.aboriginalart.com.au" },
-            { name: "Marrakech Souk", country: "مراکش", website: "#" },
-            { name: "Plaka Souvenir Shops", country: "یونان", website: "#" },
-            { name: "Käthe Wohlfahrt", country: "آلمان", website: "https://www.wohlfahrt.com" },
-            { name: "Mercado de Artesanías La Ciudadela", country: "مکزیک", website: "#" },
-            { name: "Grand Bazaar", country: "ترکیه", website: "#" },
-            { name: "The Irish Store", country: "ایرلند", website: "https://www.theirishstore.com" },
-            { name: "Swiss Made Shop", country: "سوئیس", website: "https://www.swiss-made.ch" },
-            { name: "The Dutch Store", country: "هلند", website: "https://www.thedutchstore.com" },
-            { name: "Thai Handicraft Centre", country: "تایلند", website: "#" },
-            { name: "Brazil Souvenirs", country: "برزیل", website: "https://www.brazilsouvenirs.com" },
-            { name: "Haitian Art & Craft Market", country: "هائیتی", website: "#" },
-            { name: "Les Halles", country: "فرانسه", website: "#" },
-            { name: "Feira da Ladra", country: "پرتغال", website: "#" },
-            { name: "Norsk Husflid", country: "نروژ", website: "https://www.norskflid.no" },
-            { name: "Artesanías del Perú", country: "پرو", website: "#" },
-            { name: "Finnish Design Shop", country: "فنلاند", website: "https://www.finnishdesignshop.com" },
-            { name: "Czech Crystal Shop", country: "جمهوری چک", website: "#" },
-            { name: "China National Arts & Crafts", country: "چین", website: "#" }
-        ];
+            storesData.push({
+                id: i + 1,
+                name: storeNames[i % storeNames.length] + (i < storeNames.length ? '' : ` #${Math.floor(i / storeNames.length) + 1}`), // To ensure unique names if less than 100 base names
+                country: country,
+                website: `https://www.${storeNames[i % storeNames.length].replace(/\s/g, '').toLowerCase()}.com` + (i % 5 === 0 ? '' : ''), // Some may not have a website
+                salesVolume: (Math.random() * (5000000 - 100000) + 100000).toFixed(2), // $100,000 to $5,000,000
+                areaSqM: (Math.random() * (1000 - 50) + 50).toFixed(0), // 50 to 1000 sq m
+                productsSold: products,
+                location: locations[Math.floor(Math.random() * locations.length)],
+                image: `https://placehold.co/400x300/A0D2DB/FFFFFF?text=Store${i+1}` // Placeholder image for store
+            });
+        }
+        storesData.forEach(store => { // Ensure some have no website for visual check
+            if (Math.random() < 0.2) {
+                store.website = '#';
+            }
+        });
 
-        // New data for countries section
+
+        // Consolidated and updated countriesInfo based on new product data and existing countriesInfo
+        const uniqueCountriesFromProducts = [...new Set(products.map(p => p.country))];
         const countriesInfo = [
             {
                 name: "فرانسه",
@@ -1385,6 +1672,21 @@
                 notes: "لهستان با تاریخ غنی و هنرهای سنتی، سوغاتی‌های زیبا و با ارزش دارد."
             }
         ];
+        const consolidatedCountriesInfo = [...new Set([...countriesInfo.map(c => c.name), ...uniqueCountriesFromProducts])].slice(0, 30).map(countryName => {
+            const existingInfo = countriesInfo.find(c => c.name === countryName);
+            if (existingInfo) {
+                return existingInfo;
+            } else {
+                // Create dummy data for new countries if not already in countriesInfo
+                return {
+                    name: countryName,
+                    tourists: `${Math.floor(Math.random() * (50 - 5) + 5)} میلیون نفر`, // 5-50 million tourists
+                    avgSpending: `${Math.floor(Math.random() * (150 - 50) + 50)} دلار`, // 50-150 USD
+                    popularProducts: products.filter(p => p.country === countryName).map(p => p.name).slice(0,3),
+                    notes: `اطلاعات کلی درباره بازار سوغات ${countryName}.`
+                };
+            }
+        });
 
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -1394,10 +1696,15 @@
             const priceValue = document.getElementById('price-value');
             const audienceFilter = document.getElementById('audience-filter');
             const productGrid = document.getElementById('product-grid');
-            const modal = document.getElementById('product-modal');
-            const modalContent = document.getElementById('modal-content');
+            const productModal = document.getElementById('product-modal');
+            const productModalContent = document.getElementById('modal-content');
             const closeModalBtn = document.getElementById('close-modal');
-            const countryGrid = document.getElementById('country-grid'); // New element for countries section
+            const countryGrid = document.getElementById('country-grid');
+            const storeList = document.getElementById('store-list');
+            const storeSearch = document.getElementById('store-search');
+            const storeDetailModal = document.getElementById('store-detail-modal');
+            const storeModalContent = document.getElementById('store-modal-content');
+            const closeStoreModalBtn = document.getElementById('close-store-modal');
 
             let allCountries = ['همه کشورها'];
             let allCategories = ['همه دسته‌ها'];
@@ -1412,6 +1719,14 @@
                     if (!allAudiences.includes(aud)) allAudiences.push(aud);
                 });
             });
+
+            // Add countries from consolidatedCountriesInfo to the filter if not already present
+            consolidatedCountriesInfo.forEach(c => {
+                if (!allCountries.includes(c.name)) {
+                    allCountries.push(c.name);
+                }
+            });
+
 
             allCountries.sort((a,b) => a === 'همه کشورها' ? -1 : b === 'همه کشورها' ? 1 : a.localeCompare(b,'fa'));
             allCategories.sort((a,b) => a === 'همه دسته‌ها' ? -1 : b === 'همه دسته‌ها' ? 1 : a.localeCompare(b,'fa'));
@@ -1433,15 +1748,15 @@
                     card.className = "bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 cursor-pointer";
                     card.dataset.id = product.id;
                     
-                    const categoryTags = product.category.map(cat => `<span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">${cat}</span>`).join('');
-                    const audienceTags = product.audience.map(aud => `<span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full">${aud}</span>`).join('');
+                    const categoryTags = product.category.map(cat => `<span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full whitespace-nowrap">${cat}</span>`).join('');
+                    const audienceTags = product.audience.map(aud => `<span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full whitespace-nowrap">${aud}</span>`).join('');
 
                     card.innerHTML = `
                         <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-48 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/400x300/CCCCCC/333333?text=No+Image';">
                         <div class="p-5">
                             <h3 class="text-lg font-bold text-[#34658F] truncate">${product.name}</h3>
                             <p class="text-sm text-gray-500 mb-2">${product.country}</p>
-                            <div class="flex flex-wrap gap-2 mt-2">
+                            <div class="flex flex-wrap gap-2 mt-2 max-h-12 overflow-hidden"> <!-- Added max-h and overflow for aesthetics -->
                                 ${categoryTags}
                                 ${audienceTags}
                             </div>
@@ -1483,11 +1798,11 @@
                 if (card) {
                     const productId = parseInt(card.dataset.id);
                     const product = products.find(p => p.id === productId);
-                    showModal(product);
+                    showProductModal(product);
                 }
             });
 
-            function showModal(product) {
+            function showProductModal(product) {
                 document.getElementById('modal-title').textContent = `${product.name} (${product.englishName})`;
                 const modalBody = document.getElementById('modal-body');
                 let specialNotesHtml = '';
@@ -1522,31 +1837,33 @@
                                     <li class="flex justify-between"><strong>مخاطب:</strong> <span>${product.audience.join(', ')}</span></li>
                                     <li class="flex justify-between"><strong>مواد اولیه:</strong> <span>${product.materials}</span></li>
                                     <li class="flex justify-between"><strong>کاربرد:</strong> <span>${product.usage}</span></li>
+                                    <li class="flex justify-between"><strong>میزان تولید سالانه:</strong> <span>${product.annualProductionUnits.toLocaleString()} واحد</span></li>
+                                    <li class="flex justify-between"><strong>درآمد فروش سالانه:</strong> <span>${product.annualSalesRevenueUSD.toLocaleString()}$</span></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
                     ${specialNotesHtml}
                 `;
-                modal.classList.remove('hidden');
+                productModal.classList.remove('hidden');
                 setTimeout(() => {
-                    modal.classList.remove('opacity-0');
-                    modalContent.classList.remove('scale-95');
+                    productModal.classList.remove('opacity-0');
+                    productModalContent.classList.remove('scale-95');
                 }, 10);
             }
 
-            function closeModal() {
-                 modal.classList.add('opacity-0');
-                 modalContent.classList.add('scale-95');
+            function closeProductModal() {
+                 productModal.classList.add('opacity-0');
+                 productModalContent.classList.add('scale-95');
                 setTimeout(() => {
-                    modal.classList.add('hidden');
+                    productModal.classList.add('hidden');
                 }, 300);
             }
             
-            closeModalBtn.addEventListener('click', closeModal);
-            modal.addEventListener('click', (e) => {
-                if(e.target === modal) {
-                    closeModal();
+            closeModalBtn.addEventListener('click', closeProductModal);
+            productModal.addEventListener('click', (e) => {
+                if(e.target === productModal) {
+                    closeProductModal();
                 }
             });
 
@@ -1574,23 +1891,27 @@
 
             function renderSpendingChart() {
                 const ctx = document.getElementById('spending-chart').getContext('2d');
-                // Updated to 30 countries with plausible (arbitrary) spending percentages
+                // Ensure the previous chart instance is destroyed if it exists
+                if (window.spendingChartInstance) {
+                    window.spendingChartInstance.destroy();
+                }
+
+                const spendingLabels = consolidatedCountriesInfo.map(c => c.name);
+                // Assign arbitrary spending data for the consolidated list of 30 countries
+                const spendingValues = consolidatedCountriesInfo.map(() => Math.floor(Math.random() * (25 - 5) + 5)); // 5-25%
+                
                 const spendingData = {
-                    labels: countriesInfo.map(c => c.name), // Use country names from countriesInfo
+                    labels: spendingLabels,
                     datasets: [{
                         label: 'درصد هزینه برای سوغات',
-                        data: [
-                            10, 12, 8, 15, 14, 18, 20, 19, 9, 7,
-                            11, 10, 13, 16, 14, 8, 11, 17, 12, 10,
-                            15, 9, 13, 22, 16, 10, 12, 11, 7, 11
-                        ], // Ensure this data array also has 30 elements
+                        data: spendingValues,
                         backgroundColor: 'rgba(52, 101, 143, 0.7)',
                         borderColor: 'rgba(52, 101, 143, 1)',
                         borderWidth: 1
                     }]
                 };
 
-                new Chart(ctx, {
+                window.spendingChartInstance = new Chart(ctx, { // Store instance globally
                     type: 'bar',
                     data: spendingData,
                     options: {
@@ -1620,9 +1941,6 @@
             }
             renderSpendingChart();
             
-            const storeList = document.getElementById('store-list');
-            const storeSearch = document.getElementById('store-search');
-            
             function renderStores(filteredStores) {
                 storeList.innerHTML = '';
                  if(filteredStores.length === 0){
@@ -1631,7 +1949,8 @@
                 }
                 filteredStores.forEach(store => {
                     const storeEl = document.createElement('div');
-                    storeEl.className = "border rounded-lg p-4 flex justify-between items-center bg-gray-50 hover:bg-gray-100 transition-colors";
+                    storeEl.className = "border rounded-lg p-4 flex justify-between items-center bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer";
+                    storeEl.dataset.id = store.id; // Add data-id for click handling
                     storeEl.innerHTML = `
                         <div>
                             <p class="font-bold text-lg text-gray-800">${store.name}</p>
@@ -1649,16 +1968,77 @@
                 const searchTerm = e.target.value.toLowerCase();
                 const filtered = storesData.filter(store => 
                     store.name.toLowerCase().includes(searchTerm) || 
-                    store.country.toLowerCase().includes(searchTerm)
+                    store.country.toLowerCase().includes(searchTerm) ||
+                    store.productsSold.some(p => p.toLowerCase().includes(searchTerm))
                 );
                 renderStores(filtered);
             });
             renderStores(storesData);
+
+            // Event listener for store list clicks
+            storeList.addEventListener('click', (e) => {
+                const storeElement = e.target.closest('[data-id]');
+                if (storeElement) {
+                    const storeId = parseInt(storeElement.dataset.id);
+                    const store = storesData.find(s => s.id === storeId);
+                    if (store) {
+                        showStoreDetailModal(store);
+                    }
+                }
+            });
+
+            function showStoreDetailModal(store) {
+                document.getElementById('store-modal-title').textContent = store.name;
+                const storeModalBody = document.getElementById('store-modal-body');
+                storeModalBody.innerHTML = `
+                    <div class="flex flex-col items-center mb-4">
+                        <img src="${store.image}" alt="${store.name}" class="w-full h-48 object-cover rounded-lg shadow-md mb-4" onerror="this.onerror=null;this.src='https://placehold.co/400x300/CCCCCC/333333?text=No+Store+Image';">
+                    </div>
+                    <ul class="space-y-3 text-gray-800">
+                        <li class="flex justify-between"><strong>کشور:</strong> <span>${store.country}</span></li>
+                        <li class="flex justify-between"><strong>موقعیت جغرافیایی:</strong> <span>${store.location}</span></li>
+                        <li class="flex justify-between"><strong>میزان فروش سالانه:</strong> <span>${parseFloat(store.salesVolume).toLocaleString()}$</span></li>
+                        <li class="flex justify-between"><strong>مساحت:</strong> <span>${store.areaSqM} متر مربع</span></li>
+                        <li>
+                            <strong>محصولات اصلی:</strong>
+                            <ul class="list-disc list-inside mt-1 pr-4">
+                                ${store.productsSold.map(p => `<li>${p}</li>`).join('')}
+                            </ul>
+                        </li>
+                        <li class="flex justify-between">
+                            <strong>وب‌سایت:</strong> 
+                            <span>
+                                ${store.website !== '#' ? `<a href="${store.website}" target="_blank" rel="noopener noreferrer" class="text-[#34658F] hover:underline">${store.website}</a>` : 'ندارد'}
+                            </span>
+                        </li>
+                    </ul>
+                `;
+                storeDetailModal.classList.remove('hidden');
+                setTimeout(() => {
+                    storeDetailModal.classList.remove('opacity-0');
+                    storeModalContent.classList.remove('scale-95');
+                }, 10);
+            }
+
+            function closeStoreDetailModal() {
+                storeDetailModal.classList.add('opacity-0');
+                storeModalContent.classList.add('scale-95');
+                setTimeout(() => {
+                    storeDetailModal.classList.add('hidden');
+                }, 300);
+            }
+
+            closeStoreModalBtn.addEventListener('click', closeStoreDetailModal);
+            storeDetailModal.addEventListener('click', (e) => {
+                if(e.target === storeDetailModal) {
+                    closeStoreDetailModal();
+                }
+            });
             
-            // New function to render countries
+            // New function to render countries (uses consolidatedCountriesInfo)
             function renderCountries() {
                 countryGrid.innerHTML = '';
-                countriesInfo.forEach(country => {
+                consolidatedCountriesInfo.forEach(country => {
                     const countryCard = document.createElement('div');
                     countryCard.className = "bg-white rounded-lg shadow-lg p-6";
                     countryCard.innerHTML = `
