@@ -1458,9 +1458,8 @@
         });
 
 
-        // Consolidated and updated countriesInfo based on new product data and existing countriesInfo
-        const uniqueCountriesFromProducts = [...new Set(products.map(p => p.country))];
-        const countriesInfo = [
+        // Initial base countries info
+        const baseCountriesInfo = [
             {
                 name: "فرانسه",
                 tourists: "89 میلیون نفر",
@@ -1672,12 +1671,35 @@
                 notes: "لهستان با تاریخ غنی و هنرهای سنتی، سوغاتی‌های زیبا و با ارزش دارد."
             }
         ];
-        const consolidatedCountriesInfo = [...new Set([...countriesInfo.map(c => c.name), ...uniqueCountriesFromProducts])].slice(0, 30).map(countryName => {
-            const existingInfo = countriesInfo.find(c => c.name === countryName);
+
+        // Ensure consolidatedCountriesInfo has at least 60 unique countries
+        const allUniqueCountries = [...new Set(products.map(p => p.country))];
+        baseCountriesInfo.forEach(c => {
+            if (!allUniqueCountries.includes(c.name)) {
+                allUniqueCountries.push(c.name);
+            }
+        });
+
+        // Add more dummy countries to reach 60 if needed
+        const additionalDummyCountries = [
+            "پرو", "نروژ", "فنلاند", "جمهوری چک", "بلژیک", "رومانی", "ایرلند", "سوئد", "دانمارک", "مجارستان",
+            "کرواسی", "نیوزلند", "کلمبیا", "آفریقای جنوبی", "شیلی", "یونان", "پرتغال", "فیلیپین", "تایلند", "ویتنام",
+            "مالزی", "سنگاپور", "عربستان سعودی", "قطر", "کویت", "پاکستان", "بنگلادش", "افغانستان", "قزاقستان", "اوکراین"
+        ];
+        
+        additionalDummyCountries.forEach(country => {
+            if (!allUniqueCountries.includes(country)) {
+                allUniqueCountries.push(country);
+            }
+        });
+
+        // Limit to 60 for the consolidated list used in charts and country tab
+        const consolidatedCountriesInfo = allUniqueCountries.slice(0, 60).map(countryName => {
+            const existingInfo = baseCountriesInfo.find(c => c.name === countryName);
             if (existingInfo) {
                 return existingInfo;
             } else {
-                // Create dummy data for new countries if not already in countriesInfo
+                // Create dummy data for new countries if not already in baseCountriesInfo
                 return {
                     name: countryName,
                     tourists: `${Math.floor(Math.random() * (50 - 5) + 5)} میلیون نفر`, // 5-50 million tourists
@@ -1897,7 +1919,7 @@
                 }
 
                 const spendingLabels = consolidatedCountriesInfo.map(c => c.name);
-                // Assign arbitrary spending data for the consolidated list of 30 countries
+                // Assign arbitrary spending data for the consolidated list of 60 countries
                 const spendingValues = consolidatedCountriesInfo.map(() => Math.floor(Math.random() * (25 - 5) + 5)); // 5-25%
                 
                 const spendingData = {
