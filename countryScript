@@ -1,0 +1,466 @@
+// Define this new array, preferably near your baseProducts array or at the beginning of your script tag.
+        const countriesData = [
+            {
+                name: "ایران",
+                englishName: "Iran",
+                description: "ایران، مهد تمدن باستان، با هزاران سال تاریخ و فرهنگ غنی، مقصدی بی‌نظیر برای گردشگران است. از معماری خیره‌کننده مساجد و کاخ‌ها تا بازارهای سنتی پر جنب و جوش، هر گوشه این سرزمین داستانی برای گفتن دارد. مردم ایران به مهمان‌نوازی و هنر دوستی شهرت دارند.",
+                popularSouvenirs: [
+                    { name: "فرش ایرانی", imageUrl: "https://placehold.co/150x100/957DAD/FFFFFF?text=Persian+Carpet" },
+                    { name: "صنایع دستی میناکاری", imageUrl: "https://placehold.co/150x100/ADD8E6/FFFFFF?text=Minakari" }
+                ],
+                imageUrl: "https://placehold.co/400x250/F08080/FFFFFF?text=Iran"
+            },
+            {
+                name: "روسیه",
+                englishName: "Russia",
+                description: "روسیه، پهناورترین کشور جهان، با تاریخ پرفراز و نشیب و فرهنگ غنی ادبی و هنری، جاذبه‌های بسیاری را در خود جای داده است. از معماری باشکوه کرملین تا رقص باله کلاسیک و مناظر طبیعی وسیع، روسیه ترکیبی از سنت و مدرنیته را ارائه می‌دهد.",
+                popularSouvenirs: [
+                    { name: "عروسک ماتروشکا", imageUrl: "https://placehold.co/150x100/E0BBE4/FFFFFF?text=Matryoshka" },
+                    { name: "کلاه اوشانکا", imageUrl: "https://placehold.co/150x100/B0C4DE/FFFFFF?text=Ushanka" }
+                ],
+                imageUrl: "https://placehold.co/400x250/ADD8E6/FFFFFF?text=Russia"
+            },
+            {
+                name: "ایتالیا",
+                englishName: "Italy",
+                description: "ایتالیا، سرزمین هنر، مد، غذا و تاریخ کهن، هر ساله میلیون‌ها گردشگر را به خود جذب می‌کند. از روم باستان و رنسانس تا شهرهای ساحلی زیبا و غذاهای لذیذ، ایتالیا تجربه‌ای فراموش‌نشدنی ارائه می‌دهد. فرهنگ ایتالیایی بر پایه خانواده، زیبایی و لذت از زندگی بنا شده است.",
+                popularSouvenirs: [
+                    { name: "ماسک ونیزی", imageUrl: "https://placehold.co/150x100/D291BC/FFFFFF?text=Venetian+Mask" },
+                    { name: "اشیاء شیشه‌ای مورانو", imageUrl: "https://placehold.co/150x100/B0E0E6/FFFFFF?text=Murano+Glass" }
+                ],
+                imageUrl: "https://placehold.co/400x250/FFDDC1/FFFFFF?text=Italy"
+            },
+            {
+                name: "ژاپن",
+                englishName: "Japan",
+                description: "ژاپن، سرزمینی از تضادهای زیبا، که سنت‌های باستانی را با نوآوری‌های مدرن ترکیب می‌کند. از معابد آرام و باغ‌های ذن تا شهرهای پرنور و تکنولوژی پیشرفته، ژاپن تجربه‌ای منحصر به فرد از فرهنگ و زیبایی را ارائه می‌دهد. احترام، نظم و زیبایی‌شناسی عمیقاً در فرهنگ ژاپنی ریشه دوانده است.",
+                popularSouvenirs: [
+                    { name: "کیمونو (ماکت یا یوکاتا)", imageUrl: "https://placehold.co/150x100/FFC72C/FFFFFF?text=Kimono" },
+                    { name: "عروسک کوکشی", imageUrl: "https://placehold.co/150x100/F0E68C/FFFFFF?text=Kokeshi+Doll" }
+                ],
+                imageUrl: "https://placehold.co/400x250/C7CEEA/FFFFFF?text=Japan"
+            },
+            {
+                name: "مصر",
+                englishName: "Egypt",
+                description: "مصر، گهواره تمدن، با اهرام باستانی، معابد باشکوه و رود نیل افسانه‌ای، تاریخ غنی و رمزآلودی را به نمایش می‌گذارد. فرهنگ مصر باستان تأثیر عمیقی بر جهان داشته و یادگارهای آن همچنان الهام‌بخش هستند. مهمان‌نوازی و گرمی مردم از ویژگی‌های بارز این کشور است.",
+                popularSouvenirs: [
+                    { name: "مجسمه ابوالهول", imageUrl: "https://placehold.co/150x100/A7D2CB/FFFFFF?text=Sphinx" },
+                    { name: "مجسمه فرعون", imageUrl: "https://placehold.co/150x100/D8BFD8/FFFFFF?text=Pharaoh" }
+                ],
+                imageUrl: "https://placehold.co/400x250/FFAD60/FFFFFF?text=Egypt"
+            },
+            {
+                name: "آمریکا",
+                englishName: "USA",
+                description: "ایالات متحده آمریکا، سرزمینی با تنوع فرهنگی و جغرافیایی وسیع، از شهرهای بزرگ و پر جنب و جوش تا مناظر طبیعی خیره‌کننده. فرهنگ آمریکایی ترکیبی از سنت‌های مختلف است و نمادهایی مانند آزادی و فرصت در آن برجسته هستند. روحیه کارآفرینی و نوآوری در این کشور بسیار قوی است.",
+                popularSouvenirs: [
+                    { name: "کلاه کابوی", imageUrl: "https://placehold.co/150x100/F8D800/FFFFFF?text=Cowboy+Hat" },
+                    { name: "لباس‌های ورزشی تیم‌های معروف", imageUrl: "https://placehold.co/150x100/FF6347/FFFFFF?text=Sports+Jersey" }
+                ],
+                imageUrl: "https://placehold.co/400x250/C1E1C1/FFFFFF?text=USA"
+            },
+            {
+                name: "استرالیا",
+                englishName: "Australia",
+                description: "استرالیا، قاره‌ای با حیات وحش منحصر به فرد، سواحل خیره‌کننده و فرهنگ بومی غنی. این کشور به خاطر سبک زندگی آرام، فضای باز گسترده و تنوع فرهنگی شناخته شده است. فرهنگ استرالیایی ترکیبی از ریشه‌های اروپایی و میراث باستانی بومیان است.",
+                popularSouvenirs: [
+                    { name: "بومرنگ", imageUrl: "https://placehold.co/150x100/FF6F61/FFFFFF?text=Boomerang" },
+                    { name: "ساز دیدجریدو", imageUrl: "https://placehold.co/150x100/D9BF8F/FFFFFF?text=Didgeridoo" }
+                ],
+                imageUrl: "https://placehold.co/400x250/96CEB4/FFFFFF?text=Australia"
+            },
+            {
+                name: "هلند",
+                englishName: "Netherlands",
+                description: "هلند، سرزمین آسیاب‌های بادی، گل‌های لاله و کانال‌های زیبا، به خاطر فرهنگ دوچرخه‌سواری و شهرهای جذابش معروف است. این کشور با رویکردی نوآورانه و ذهنیتی باز، میراث تاریخی غنی خود را حفظ کرده است. مردم هلند به رک‌گویی و عمل‌گرایی شهرت دارند.",
+                popularSouvenirs: [
+                    { name: "کفش چوبی (Klompen)", imageUrl: "https://placehold.co/150x100/6B5B95/FFFFFF?text=Dutch+Clogs" },
+                    { name: "سفال آبی و سفید دلفت", imageUrl: "https://placehold.co/150x100/ADD8E6/FFFFFF?text=Delft+Pottery" }
+                ],
+                imageUrl: "https://placehold.co/400x250/ADD8E6/FFFFFF?text=Netherlands"
+            },
+            {
+                name: "مراکش",
+                englishName: "Morocco",
+                description: "مراکش، کشوری پر رمز و راز در شمال آفریقا، با بازارهای پررنگ و بوی ادویه، شهرهای باستانی و فرهنگ اسلامی غنی. از صحراهای وسیع تا کوهستان‌های اطلس و شهرهای ساحلی، مراکش تجربه‌ای متفاوت و جذاب را ارائه می‌دهد. مهمان‌نوازی و صنایع دستی نفیس از ویژگی‌های بارز این کشور است.",
+                popularSouvenirs: [
+                    { name: "فانوس مراکشی", imageUrl: "https://placehold.co/150x100/88B04B/FFFFFF?text=Moroccan+Lantern" },
+                    { name: "سفال تاگین", imageUrl: "https://placehold.co/150x100/FFC18E/FFFFFF?text=Tagine+Pottery" }
+                ],
+                imageUrl: "https://placehold.co/400x250/88B04B/FFFFFF?text=Morocco"
+            },
+            {
+                name: "یونان",
+                englishName: "Greece",
+                description: "یونان، مهد تمدن غرب، با تاریخ اساطیری و بناهای باستانی خیره‌کننده. از سواحل زیبا و جزایر رویایی تا ویرانه‌های تاریخی و فرهنگ پر جنب و جوش، یونان مقصدی است که هر گردشگری را مجذوب خود می‌کند. فلسفه، دموکراسی و هنر از این سرزمین برخاسته‌اند.",
+                popularSouvenirs: [
+                    { name: "سفال یونانی", imageUrl: "https://placehold.co/150x100/F7CAC9/FFFFFF?text=Greek+Pottery" },
+                    { name: "ماکت معابد باستانی", imageUrl: "https://placehold.co/150x100/C0C0C0/FFFFFF?text=Acropolis+Model" }
+                ],
+                imageUrl: "https://placehold.co/400x250/F7CAC9/FFFFFF?text=Greece"
+            },
+            {
+                name: "آلمان",
+                englishName: "Germany",
+                description: "آلمان، کشوری با میراث صنعتی قوی و شهرهای تاریخی و مدرن. از قلعه‌های افسانه‌ای و جنگل‌های انبوه تا آبجوخانه‌های سنتی و موزه‌های جهانی، آلمان ترکیبی از سنت، نوآوری و طبیعت را ارائه می‌دهد. دقت، سازماندهی و عشق به فرهنگ از ویژگی‌های آلمانی‌ها است.",
+                popularSouvenirs: [
+                    { name: "ساعت کوکو", imageUrl: "https://placehold.co/150x100/B5EAD7/FFFFFF?text=Cuckoo+Clock" },
+                    { name: "چوب‌تراشی جنگل سیاه", imageUrl: "https://placehold.co/150x100/F5D7E3/FFFFFF?text=German+Wood" }
+                ],
+                imageUrl: "https://placehold.co/400x250/B5EAD7/FFFFFF?text=Germany"
+            },
+            {
+                name: "شیلی",
+                englishName: "Chile",
+                description: "شیلی، کشوری طویل و باریک در آمریکای جنوبی، از بیابان‌های خشک تا کوهستان‌های آند و سواحل اقیانوس آرام. جزیره ایستر (راپا نویی) با مجسمه‌های موآی خود، یکی از رمزآلودترین نقاط جهان است. فرهنگ شیلی ترکیبی از سنت‌های بومی و تأثیرات اروپایی است.",
+                popularSouvenirs: [
+                    { name: "مجسمه موآی (ماکت)", imageUrl: "https://placehold.co/150x100/C1E1C1/FFFFFF?text=Moai+Figurine" },
+                    { name: "صنایع دستی نقره‌ای", imageUrl: "https://placehold.co/150x100/C0C0C0/FFFFFF?text=Silver+Crafts" }
+                ],
+                imageUrl: "https://placehold.co/400x250/C1E1C1/FFFFFF?text=Chile"
+            },
+            {
+                name: "اندونزی",
+                englishName: "Indonesia",
+                description: "اندونزی، کشوری متشکل از هزاران جزیره، با تنوع فرهنگی، طبیعی و زیستی بی‌نظیر. از سواحل بالی تا معابد باستانی جاوا و جنگل‌های انبوه سوماترا، اندونزی تجربه‌ای استوایی و فرهنگی را ارائه می‌دهد. فرهنگ غنی این کشور با رقص، موسیقی و هنرهای دستی آن شناخته می‌شود.",
+                popularSouvenirs: [
+                    { name: "پارچه سارافان", imageUrl: "https://placehold.co/150x100/FFDDC1/FFFFFF?text=Sarong+Fabric" },
+                    { name: "پارچه باتیک", imageUrl: "https://placehold.co/150x100/FFDDC1/FFFFFF?text=Batik+Fabric" }
+                ],
+                imageUrl: "https://placehold.co/400x250/FFDDC1/FFFFFF?text=Indonesia"
+            },
+            {
+                name: "چین",
+                englishName: "China",
+                description: "چین، کشوری با تمدن ۴۰۰۰ ساله، با تاریخ و فرهنگ بی‌نظیر. از دیوار بزرگ چین تا شهرهای مدرن و پرجمعیت و هنرهای سنتی، چین ترکیبی از گذشته و آینده را به نمایش می‌گذارد. فرهنگ چینی با فلسفه‌ها، اختراعات و هنرهای زیبا شناخته می‌شود.",
+                popularSouvenirs: [
+                    { name: "ظروف چینی آبی و سفید", imageUrl: "https://placehold.co/150x100/C7CEEA/FFFFFF?text=Blue+Porcelain" },
+                    { name: "مجسمه اژدهای چینی", imageUrl: "https://placehold.co/150x100/8B0000/FFFFFF?text=Chinese+Dragon" }
+                ],
+                imageUrl: "https://placehold.co/400x250/C7CEEA/FFFFFF?text=China"
+            },
+            {
+                name: "تایلند",
+                englishName: "Thailand",
+                description: "تایلند، سرزمین لبخندها، با سواحل زیبا، معابد طلایی و فرهنگ بودایی آرامش‌بخش. از بازارهای شناور و غذاهای خیابانی لذیذ تا معابد باستانی و طبیعت بکر، تایلند تجربه‌ای جذاب و خاطره‌انگیز را ارائه می‌دهد. مردم تایلند به مهربانی و احترام به سنت‌ها معروف هستند.",
+                popularSouvenirs: [
+                    { name: "مجسمه بودا", imageUrl: "https://placehold.co/150x100/FFAD60/FFFFFF?text=Buddha+Statue" },
+                    { name: "مجسمه فیل چوبی", imageUrl: "https://placehold.co/150x100/4CAF50/FFFFFF?text=Wooden+Elephant" }
+                ],
+                imageUrl: "https://placehold.co/400x250/FFAD60/FFFFFF?text=Thailand"
+            },
+            {
+                name: "مکزیک",
+                englishName: "Mexico",
+                description: "مکزیک، کشوری با فرهنگ پر جنب و جوش، تاریخ غنی مایایی و آزتکی، و غذاهای لذیذ. از ویرانه‌های باستانی و بازارهای رنگارنگ تا جشن‌های شاد و موسیقی پرشور، مکزیک تجربه‌ای فراموش‌نشدنی را ارائه می‌دهد. مردم مکزیک به خون‌گرمی و حفظ سنت‌های خود شهرت دارند.",
+                popularSouvenirs: [
+                    { name: "کلاه سومبررو", imageUrl: "https://placehold.co/150x100/96CEB4/FFFFFF?text=Sombrero" },
+                    { name: "سفال تالاورا", imageUrl: "https://placehold.co/150x100/ADD8E6/FFFFFF?text=Talavera+Pottery" }
+                ],
+                imageUrl: "https://placehold.co/400x250/96CEB4/FFFFFF?text=Mexico"
+            },
+            {
+                name: "لهستان",
+                englishName: "Poland",
+                description: "لهستان، کشوری در قلب اروپا با تاریخ غنی و شهرهای زیبا. از قلعه‌های قرون وسطایی و شهرهای بازسازی شده پس از جنگ تا مناظر طبیعی بکر، لهستان مقصدی جذاب برای کشف است. فرهنگ لهستانی با موسیقی، هنر و مقاومت تاریخی شناخته می‌شود.",
+                popularSouvenirs: [
+                    { name: "جواهرات کهربا", imageUrl: "https://placehold.co/150x100/F0E68C/FFFFFF?text=Amber+Jewelry" },
+                    { name: "صنایع دستی چوبی", imageUrl: "https://placehold.co/150x100/D2B48C/FFFFFF?text=Wooden+Crafts" }
+                ],
+                imageUrl: "https://placehold.co/400x250/F0E68C/FFFFFF?text=Poland"
+            },
+            {
+                name: "اکوادور",
+                englishName: "Ecuador",
+                description: "اکوادور، کشوری کوچک و متنوع در آمریکای جنوبی، با کوهستان‌های آند، جنگل‌های آمازون و جزایر گالاپاگوس. این کشور به دلیل تنوع زیستی فوق‌العاده و فرهنگ‌های بومی غنی شناخته شده است. صنایع دستی و کلاه پاناما از معروف‌ترین سوغاتی‌های این کشور هستند.",
+                popularSouvenirs: [
+                    { name: "کلاه پاناما", imageUrl: "https://placehold.co/150x100/ADD8E6/FFFFFF?text=Panama+Hat" },
+                    { name: "مجسمه‌های چوبی اکوادوری", imageUrl: "https://placehold.co/150x100/8B4513/FFFFFF?text=Ecuadorian+Wood" }
+                ],
+                imageUrl: "https://placehold.co/400x250/ADD8E6/FFFFFF?text=Ecuador"
+            },
+            {
+                name: "سوئیس",
+                englishName: "Switzerland",
+                description: "سوئیس، کشوری در قلب آلپ، با مناظر کوهستانی خیره‌کننده، شهرهای زیبا و کیفیت بالای زندگی. این کشور به دلیل ساعت‌سازی دقیق، شکلات‌های لذیذ و صنایع دستی با کیفیت شهرت جهانی دارد. دقت، کیفیت و زیبایی طبیعی از ویژگی‌های بارز سوئیس هستند.",
+                popularSouvenirs: [
+                    { name: "چاقوی سوئیسی ارتش", imageUrl: "https://placehold.co/150x100/FF6347/FFFFFF?text=Swiss+Knife" },
+                    { name: "ساعت‌های دیواری فاخر", imageUrl: "https://placehold.co/150x100/C0C0C0/FFFFFF?text=Swiss+Clock" }
+                ],
+                imageUrl: "https://placehold.co/400x250/B5EAD7/FFFFFF?text=Switzerland"
+            },
+            {
+                name: "پرو",
+                englishName: "Peru",
+                description: "پرو، کشوری با میراث کهن اینکاها، مناظر طبیعی خیره‌کننده و فرهنگ‌های بومی غنی. از ماچو پیچو مرموز تا کوهستان‌های آند و جنگل‌های آمازون، پرو تجربه‌ای تاریخی و ماجراجویانه را ارائه می‌دهد. صنایع دستی پشمی و سفال‌های رنگارنگ از سوغاتی‌های محبوب آن هستند.",
+                popularSouvenirs: [
+                    { name: "مجسمه گاو شاخدار (تورو د پکیرا)", imageUrl: "https://placehold.co/150x100/8A2BE2/FFFFFF?text=Pucara+Bull" },
+                    { name: "پارچه سنتی آند (مانتا)", imageUrl: "https://placehold.co/150x100/FFD700/FFFFFF?text=Andean+Fabric" }
+                ],
+                imageUrl: "https://placehold.co/400x250/FFDDC1/FFFFFF?text=Peru"
+            },
+            {
+                name: "بلژیک",
+                englishName: "Belgium",
+                description: "بلژیک، کشوری کوچک در غرب اروپا، با شهرهای قرون وسطایی زیبا، شکلات‌های خوشمزه و آبجوهای معروف. از میدان‌های شهر باشکوه تا موزه‌های هنری و کافه‌های دنج، بلژیک تجربه‌ای جذاب و دلنشین را ارائه می‌دهد. فرهنگ بلژیکی ترکیبی از تأثیرات فرانسوی و هلندی است.",
+                popularSouvenirs: [
+                    { name: "مجسمه مانکن پیزاررو", imageUrl: "https://placehold.co/150x100/E6E6FA/FFFFFF?text=Manneken+Pis" },
+                    { name: "تاپستری (دیوارکوب)", imageUrl: "https://placehold.co/150x100/D2B48C/FFFFFF?text=Tapestry" }
+                ],
+                imageUrl: "https://placehold.co/400x250/E6E6FA/FFFFFF?text=Belgium"
+            },
+            {
+                name: "برزیل",
+                englishName: "Brazil",
+                description: "برزیل، بزرگترین کشور آمریکای جنوبی، با سواحل خیره‌کننده، جنگل‌های آمازون و جشن‌های پرشور کارناوال. این کشور به دلیل فوتبال، موسیقی سامبا و تنوع فرهنگی شناخته شده است. روحیه شاد و مهمان‌نوازی از ویژگی‌های بارز مردم برزیل است.",
+                popularSouvenirs: [
+                    { name: "دستبندهای کائوچو", imageUrl: "https://placehold.co/150x100/FFD700/FFFFFF?text=Rubber+Bracelets" },
+                    { name: "صنایع دستی بومی", imageUrl: "https://placehold.co/150x100/8B4513/FFFFFF?text=Indigenous+Crafts" }
+                ],
+                imageUrl: "https://placehold.co/400x250/FFD700/FFFFFF?text=Brazil"
+            },
+            {
+                name: "هائیتی",
+                englishName: "Haiti",
+                description: "هائیتی، کشوری با فرهنگ و تاریخ منحصربه‌فرد در کارائیب، که از تأثیرات آفریقایی و فرانسوی الهام گرفته است. هنر هائیتی، به ویژه نقاشی و صنایع دستی، بسیار غنی و رنگارنگ است. فرهنگ وودو نیز بخشی جدایی‌ناپذیر از هویت هائیتی است.",
+                popularSouvenirs: [
+                    { name: "عروسک وودو", imageUrl: "https://placehold.co/150x100/8B4513/FFFFFF?text=Voodoo+Doll" },
+                    { name: "نقاشی‌های بومی", imageUrl: "https://placehold.co/150x100/FFB6C1/FFFFFF?text=Haitian+Painting" }
+                ],
+                imageUrl: "https://placehold.co/400x250/8B4513/FFFFFF?text=Haiti"
+            },
+            {
+                name: "فرانسه",
+                englishName: "France",
+                description: "فرانسه، کشور مد، هنر، غذا و عشق، با شهرهای رمانتیک و مناظر طبیعی زیبا. از برج ایفل و موزه‌های جهانی تا غذاهای لذیذ و روستاهای ساحلی، فرانسه تجربه‌ای بی‌نظیر از فرهنگ و زیبایی را ارائه می‌دهد. سبک زندگی فرانسوی با ظرافت و لذت از زندگی شناخته می‌شود.",
+                popularSouvenirs: [
+                    { name: "کلاه برت", imageUrl: "https://placehold.co/150x100/DDA0DD/FFFFFF?text=Beret" },
+                    { name: "ماکت برج ایفل", imageUrl: "https://placehold.co/150x100/C0C0C0/FFFFFF?text=Eiffel+Tower" }
+                ],
+                imageUrl: "https://placehold.co/400x250/DDA0DD/FFFFFF?text=France"
+            },
+            {
+                name: "پرتغال",
+                englishName: "Portugal",
+                description: "پرتغال، کشوری با تاریخ دریانوردی غنی، سواحل زیبا و شهرهای تاریخی جذاب. از خیابان‌های سنگ‌فرش لیسبون تا قلعه‌های باستانی و غذاهای دریایی لذیذ، پرتغال تجربه‌ای مدیترانه‌ای و دلنشین را ارائه می‌دهد. فرهنگ پرتغالی با موسیقی فادو و کاشی‌های آزولژو شناخته می‌شود.",
+                popularSouvenirs: [
+                    { name: "مجسمه خروس بارسلوس", imageUrl: "https://placehold.co/150x100/FFC0CB/FFFFFF?text=Rooster+Barcelos" },
+                    { name: "کاشی‌های آزولژو", imageUrl: "https://placehold.co/150x100/4682B4/FFFFFF?text=Azulejo+Tiles" }
+                ],
+                imageUrl: "https://placehold.co/400x250/FFC0CB/FFFFFF?text=Portugal"
+            },
+            {
+                name: "نروژ",
+                englishName: "Norway",
+                description: "نروژ، کشوری با طبیعت خیره‌کننده، از آبدره‌های عمیق و کوهستان‌های بلند تا شفق قطبی mesmerizing. این کشور به دلیل فرهنگ وایکینگی، شهرهای زیبا و کیفیت زندگی بالا شناخته شده است. احترام به طبیعت و سادگی از ویژگی‌های فرهنگ نروژی است.",
+                popularSouvenirs: [
+                    { name: "عروسک ترول", imageUrl: "https://placehold.co/150x100/98FB98/FFFFFF?text=Troll+Doll" },
+                    { name: "اشیاء چوبی کنده‌کاری شده (سامی)", imageUrl: "https://placehold.co/150x100/8B4513/FFFFFF?text=Sami+Carvings" }
+                ],
+                imageUrl: "https://placehold.co/400x250/98FB98/FFFFFF?text=Norway"
+            },
+            {
+                name: "فنلاند",
+                englishName: "Finland",
+                description: "فنلاند، سرزمین هزاران دریاچه و جنگل، با شفق قطبی زیبا و فرهنگ سونا. این کشور به دلیل طراحی مدرن، سیستم آموزشی پیشرفته و طبیعت بکرش معروف است. آرامش، سادگی و ارتباط با طبیعت از ویژگی‌های فرهنگ فنلاندی است.",
+                popularSouvenirs: [
+                    { name: "مجسمه گوزن شمالی", imageUrl: "https://placehold.co/150x100/ADD8E6/FFFFFF?text=Reindeer+Figurine" },
+                    { name: "چاقوهای دست‌ساز (پوکو)", imageUrl: "https://placehold.co/150x100/D2B48C/FFFFFF?text=Puukko+Knife" }
+                ],
+                imageUrl: "https://placehold.co/400x250/ADD8E6/FFFFFF?text=Finland"
+            },
+            {
+                name: "ترکیه",
+                englishName: "Turkey",
+                description: "ترکیه، پلی بین شرق و غرب، با تاریخ غنی امپراتوری عثمانی و فرهنگ متنوع. از مساجد باشکوه و بازارهای پرهیاهو تا سواحل زیبا و غذاهای لذیذ، ترکیه تجربه‌ای بی‌نظیر از تلاقی فرهنگ‌ها را ارائه می‌دهد. مهمان‌نوازی و صنایع دستی پررنگ از ویژگی‌های بارز این کشور است.",
+                popularSouvenirs: [
+                    { name: "کلاه فز", imageUrl: "https://placehold.co/150x100/CD5C5C/FFFFFF?text=Fez+Hat" },
+                    { name: "ظروف مسی", imageUrl: "https://placehold.co/150x100/CD853F/FFFFFF?text=Copperware" }
+                ],
+                imageUrl: "https://placehold.co/400x250/CD5C5C/FFFFFF?text=Turkey"
+            },
+            {
+                name: "رومانی",
+                englishName: "Romania",
+                description: "رومانی، کشوری در اروپای شرقی با قلعه‌های قرون وسطایی، جنگل‌های انبوه و داستان‌های دراکولا. این کشور به دلیل فرهنگ فولکلور غنی، مناظر کوهستانی زیبا و شهرهای تاریخی‌اش شناخته شده است. سنت‌های روستایی و مهمان‌نوازی از ویژگی‌های بارز فرهنگ رومانیایی است.",
+                popularSouvenirs: [
+                    { name: "عروسک‌های فولکلور", imageUrl: "https://placehold.co/150x100/FFB6C1/FFFFFF?text=Folklore+Dolls" },
+                    { name: "صنایع دستی چوبی", imageUrl: "https://placehold.co/150x100/D2B48C/FFFFFF?text=Wooden+Crafts" }
+                ],
+                imageUrl: "https://placehold.co/400x250/FFB6C1/FFFFFF?text=Romania"
+            },
+            {
+                name: "جمهوری چک",
+                englishName: "Czech Republic",
+                description: "جمهوری چک، کشوری با شهرهای تاریخی زیبا، قلعه‌های قرون وسطایی و آبجوسازی معروف. پراگ، پایتخت آن، با معماری گوتیک و باروک خود جذابیت ویژه‌ای دارد. فرهنگ چک با هنر، موسیقی کلاسیک و سنت‌های قدیمی شناخته می‌شود.",
+                popularSouvenirs: [
+                    { name: "شیشه‌های کریستال بوهمیا", imageUrl: "https://placehold.co/150x100/AFEEEE/FFFFFF?text=Bohemian+Crystal" },
+                    { name: "عروسک خیمه شب‌بازی (ماریونت)", imageUrl: "https://placehold.co/150x100/A0522D/FFFFFF?text=Marionette+Puppet" }
+                ],
+                imageUrl: "https://placehold.co/400x250/AFEEEE/FFFFFF?text=Czech+Republic"
+            },
+            {
+                name: "نپال",
+                englishName: "Nepal",
+                description: "نپال، سرزمینی در دامنه هیمالیا، خانه بلندترین قله‌های جهان و فرهنگی باستانی از بودیسم و هندوئیسم. از معابد باستانی و کوه‌های مقدس تا روستاهای کوهستانی و روحیه آرام مردم، نپال تجربه‌ای معنوی و طبیعی بی‌نظیر را ارائه می‌دهد.",
+                popularSouvenirs: [
+                    { name: "کاسه خواننده تبتی", imageUrl: "https://placehold.co/150x100/C0C0C0/FFFFFF?text=Singing+Bowl" },
+                    { name: "چاقوی گورکا (کوکری)", imageUrl: "https://placehold.co/150x100/8B4513/FFFFFF?text=Khukuri" }
+                ],
+                imageUrl: "https://placehold.co/400x250/C0C0C0/FFFFFF?text=Nepal"
+            },
+            {
+                name: "اسکاتلند",
+                englishName: "Scotland",
+                description: "اسکاتلند، سرزمینی از قلعه‌های باستانی، کوهستان‌های سرسبز، دریاچه‌های اسرارآمیز و شهرهای تاریخی. این کشور به دلیل فرهنگ سلتیک، موسیقی بگ‌پایپ و ویسکی معروفش شناخته شده است. مهمان‌نوازی و روحیه مستقل از ویژگی‌های بارز مردم اسکاتلند هستند.",
+                popularSouvenirs: [
+                    { name: "دامن سنتی (کیلْت)", imageUrl: "https://placehold.co/150x100/A52A2A/FFFFFF?text=Kilt" },
+                    { name: "صنایع دستی پشمی (تارتان)", imageUrl: "https://placehold.co/150x100/B0E0E6/FFFFFF?text=Tartan" }
+                ],
+                imageUrl: "https://placehold.co/400x250/B0E0E6/FFFFFF?text=Scotland"
+            },
+            {
+                name: "ویتنام",
+                englishName: "Vietnam",
+                description: "ویتنام، کشوری با مناظر طبیعی خیره‌کننده، از خلیج هالونگ تا دلتای مکونگ، و تاریخی پر از مقاومت و فرهنگ غنی. این کشور با غذاهای لذیذ خیابانی، شهرهای پر جنب و جوش و مردم سخت‌کوشش شناخته می‌شود. ترکیبی از سنت‌های آسیایی و تأثیرات فرانسوی در فرهنگ آن دیده می‌شود.",
+                popularSouvenirs: [
+                    { name: "کلاه بامبو (نون لا)", imageUrl: "https://placehold.co/150x100/9ACD32/FFFFFF?text=Vietnamese+Hat" },
+                    { name: "عروسک‌های آب (Water Puppets)", imageUrl: "https://placehold.co/150x100/D2B48C/FFFFFF?text=Water+Puppet" }
+                ],
+                imageUrl: "https://placehold.co/400x250/9ACD32/FFFFFF?text=Vietnam"
+            },
+            {
+                name: "نیوزلند",
+                englishName: "New Zealand",
+                description: "نیوزلند، کشوری با مناظر طبیعی فوق‌العاده از کوهستان‌های آلپ تا سواحل طلایی و آتشفشان‌های فعال. این کشور به دلیل فرهنگ ماوری، ماجراجویی‌های فضای باز و فیلم‌های ارباب حلقه‌ها معروف است. ارتباط عمیق با طبیعت و روحیه ماجراجو از ویژگی‌های مردم نیوزلند هستند.",
+                popularSouvenirs: [
+                    { name: "زیورآلات ماوری", imageUrl: "https://placehold.co/150x100/6A5ACD/FFFFFF?text=Maori+Jewelry" },
+                    { name: "مجسمه پرنده کیوی", imageUrl: "https://placehold.co/150x100/8B4513/FFFFFF?text=Kiwi+Bird" }
+                ],
+                imageUrl: "https://placehold.co/400x250/6A5ACD/FFFFFF?text=New+Zealand"
+            },
+            {
+                name: "کنیا",
+                englishName: "Kenya",
+                description: "کنیا، کشوری در شرق آفریقا، با دشت‌های ساوانا، حیات وحش غنی و فرهنگ‌های قبیله‌ای متنوع. از سافاری‌های هیجان‌انگیز تا قبایل ماسایی و سواحل اقیانوس هند، کنیا تجربه‌ای بی‌نظیر از طبیعت و فرهنگ آفریقایی را ارائه می‌دهد. مهمان‌نوازی و صنایع دستی رنگارنگ از ویژگی‌های این کشور است.",
+                popularSouvenirs: [
+                    { name: "دستبندهای مهره‌ای ماسایی", imageUrl: "https://placehold.co/150x100/FFD700/FFFFFF?text=Maasai+Bracelets" },
+                    { name: "مجسمه‌های حیوانی چوبی", imageUrl: "https://placehold.co/150x100/D2B48C/FFFFFF?text=Wooden+Animals" }
+                ],
+                imageUrl: "https://placehold.co/400x250/FFD700/FFFFFF?text=Kenya"
+            },
+            {
+                name: "اتریش",
+                englishName: "Austria",
+                description: "اتریش، کشوری با مناظر آلپی زیبا، شهرهای تاریخی و میراث غنی موسیقی کلاسیک. از وین با کاخ‌های باشکوه و موسیقی موتزارت تا روستاهای کوهستانی و سنت‌های بومی، اتریش تجربه‌ای از هنر، تاریخ و طبیعت را ارائه می‌دهد. فرهنگ اتریشی با ظرافت و عشق به موسیقی شناخته می‌شود.",
+                popularSouvenirs: [
+                    { name: "ساعت شنی (Sand Art)", imageUrl: "https://placehold.co/150x100/BCF8D7/FFFFFF?text=Sand+Art" },
+                    { name: "مجسمه‌های کریستالی سواروفسکی", imageUrl: "https://placehold.co/150x100/ADD8E6/FFFFFF?text=Swarovski" }
+                ],
+                imageUrl: "https://placehold.co/400x250/BCF8D7/FFFFFF?text=Austria"
+            },
+            {
+                name: "کانادا",
+                englishName: "Canada",
+                description: "کانادا، دومین کشور بزرگ جهان، با مناظر طبیعی وسیع و خیره‌کننده، از کوهستان‌های راکی تا آبدره‌های سواحل غربی و شهرهای چندفرهنگی. این کشور به دلیل حیات وحش غنی، شهرهای دوستانه و مردم مهمان‌نوازش شناخته شده است. احترام به طبیعت و تنوع فرهنگی از ویژگی‌های بارز کانادا است.",
+                popularSouvenirs: [
+                    { name: "مجسمه‌های سنگی اینوییتی", imageUrl: "https://placehold.co/150x100/A9A9A9/FFFFFF?text=Inuit+Carvings" },
+                    { name: "ظروف چوبی با نماد برگ افرا", imageUrl: "https://placehold.co/150x100/A52A2A/FFFFFF?text=Maple+Leaf+Wood" }
+                ],
+                imageUrl: "https://placehold.co/400x250/A9A9A9/FFFFFF?text=Canada"
+            },
+            {
+                name: "اسرائیل",
+                englishName: "Israel",
+                description: "اسرائیل، سرزمینی مقدس برای سه دین بزرگ جهان، با تاریخ باستانی و شهرهای مدرن. از اورشلیم باستانی و دیوارهای ندبه تا تل‌آویو پر جنب و جوش و سواحل مدیترانه، اسرائیل تجربه‌ای منحصر به فرد از تاریخ، معنویت و نوآوری را ارائه می‌دهد.",
+                popularSouvenirs: [
+                    { name: "شمعدان مینورا", imageUrl: "https://placehold.co/150x100/FFD700/FFFFFF?text=Menorah" },
+                    { name: "حمسه (نماد دست)", imageUrl: "https://placehold.co/150x100/C0C0C0/FFFFFF?text=Hamsa" }
+                ],
+                imageUrl: "https://placehold.co/400x250/FFD700/FFFFFF?text=Israel"
+            },
+            {
+                name: "کلمبیا",
+                englishName: "Colombia",
+                description: "کلمبیا، کشوری در آمریکای جنوبی با سواحل کارائیب، کوهستان‌های آند و جنگل‌های آمازون. این کشور به دلیل قهوه با کیفیت، موسیقی شاد و شهرهای تاریخی‌اش شناخته شده است. صنایع دستی رنگارنگ و مهمان‌نوازی از ویژگی‌های بارز فرهنگ کلمبیایی است.",
+                popularSouvenirs: [
+                    { name: "کیف‌های بافندگی دستی (Wayuu Mochila)", imageUrl: "https://placehold.co/150x100/FF69B4/FFFFFF?text=Wayuu+Mochila" },
+                    { name: "زمرد خام", imageUrl: "https://placehold.co/150x100/008000/FFFFFF?text=Emerald" }
+                ],
+                imageUrl: "https://placehold.co/400x250/FF69B4/FFFFFF?text=Colombia"
+            },
+            {
+                name: "آرژانتین",
+                englishName: "Argentina",
+                description: "آرژانتین، کشوری در آمریکای جنوبی با مناظر طبیعی متنوع، از کوهستان‌های آند تا دشت‌های پامپا و فرهنگ تانگو پرشور. این کشور به دلیل گوشت گاو، شراب مالبرک و فوتبال معروف است. فرهنگ آرژانتینی با عشق به خانواده، موسیقی و زندگی اجتماعی شناخته می‌شود.",
+                popularSouvenirs: [
+                    { name: "عروسک گائوشو (Rag Doll)", imageUrl: "https://placehold.co/150x100/B0C4DE/FFFFFF?text=Gaucho+Doll" },
+                    { name: "صنایع دستی چرمی", imageUrl: "https://placehold.co/150x100/8B4513/FFFFFF?text=Leather+Crafts" }
+                ],
+                imageUrl: "https://placehold.co/400x250/B0C4DE/FFFFFF?text=Argentina"
+            },
+            {
+                name: "فیلیپین",
+                englishName: "Philippines",
+                description: "فیلیپین، کشوری جزیره‌ای در آسیای جنوب شرقی با سواحل خیره‌کننده، آتشفشان‌های فعال و فرهنگ متنوعی از تأثیرات مالایایی، اسپانیایی و آمریکایی. مهمان‌نوازی گرم و روحیه شاد مردم فیلیپین از ویژگی‌های بارز این کشور است. صنایع دستی بافته شده از سوغاتی‌های محبوب آن هستند.",
+                popularSouvenirs: [
+                    { name: "کلاه بافندگی دستی (سالاکوت)", imageUrl: "https://placehold.co/150x100/F0E68C/FFFFFF?text=Salakot+Hat" },
+                    { name: "صدف‌های مروارید تزئینی", imageUrl: "https://placehold.co/150x100/FFFFFF/000000?text=Mother+of+Pearl" }
+                ],
+                imageUrl: "https://placehold.co/400x250/F0E68C/FFFFFF?text=Philippines"
+            },
+            {
+                name: "غنا",
+                englishName: "Ghana",
+                description: "غنا، کشوری در غرب آفریقا، با تاریخ غنی پادشاهی‌های باستانی، سواحل زیبا و بازارهای پر جنب و جوش. این کشور به دلیل پارچه‌های کنته، طلا و موسیقی هایلایف معروف است. مهمان‌نوازی و روحیه جامعه‌محور از ویژگی‌های بارز فرهنگ غنا است.",
+                popularSouvenirs: [
+                    { name: "ماسک سنتی آفریقایی", imageUrl: "https://placehold.co/150x100/8B4513/FFFFFF?text=African+Mask" },
+                    { name: "پارچه‌های کنته (Kente Cloth)", imageUrl: "https://placehold.co/150x100/FF0000/FFFFFF?text=Kente+Cloth" }
+                ],
+                imageUrl: "https://placehold.co/400x250/8B4513/FFFFFF?text=Ghana"
+            },
+            {
+                name: "هاوایی (آمریکا)",
+                englishName: "Hawaii (USA)",
+                description: "هاوایی، مجموعه‌ای از جزایر آتشفشانی در اقیانوس آرام، با سواحل گرمسیری، آتشفشان‌های فعال و فرهنگ پولینزیایی. این ایالت آمریکا به دلیل رقص هولا، موج‌سواری و طبیعت بکرش شهرت جهانی دارد. آلوها (عشق و همبستگی) از ویژگی‌های بارز فرهنگ هاوایی است.",
+                popularSouvenirs: [
+                    { name: "عروسک گدازه (Lava Doll)", imageUrl: "https://placehold.co/150x100/808080/FFFFFF?text=Lava+Doll" },
+                    { name: "گردنبند گل (لی)", imageUrl: "https://placehold.co/150x100/FFC0CB/FFFFFF?text=Lei" }
+                ],
+                imageUrl: "https://placehold.co/400x250/808080/FFFFFF?text=Hawaii"
+            }
+        ];
+
+        // You will need to modify the JavaScript code within your <script> tags
+        // that is responsible for rendering the "countries" section.
+        // Look for the section that targets '#country-grid'.
+
+        // Example of how to render the countries:
+        // (You should replace your existing country rendering logic with something similar)
+        const countryGrid = document.getElementById('country-grid');
+        if (countryGrid) {
+            countryGrid.innerHTML = ''; // Clear existing content
+
+            countriesData.forEach(country => {
+                const countryCard = document.createElement('div');
+                countryCard.className = 'bg-gray-50 p-4 rounded-lg shadow-md flex flex-col items-center text-center';
+                countryCard.innerHTML = `
+                    <img src="${country.imageUrl}" alt="${country.name}" class="w-full h-40 object-cover rounded-md mb-4">
+                    <h3 class="text-xl font-semibold text-[#34658F] mb-2">${country.name}</h3>
+                    <p class="text-gray-600 text-sm mb-3">${country.description}</p>
+                    <div class="mt-auto">
+                        <h4 class="text-md font-medium text-gray-700 mb-2">سوغاتی‌های محبوب:</h4>
+                        <ul class="list-disc list-inside text-gray-600 text-sm">
+                            ${country.popularSouvenirs.map(s => `
+                                <li class="flex items-center justify-center gap-2">
+                                    <img src="${s.imageUrl}" alt="${s.name}" class="w-8 h-8 rounded-full object-cover">
+                                    <span>${s.name}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                `;
+                countryGrid.appendChild(countryCard);
+            });
+        }
